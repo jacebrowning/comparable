@@ -6,15 +6,17 @@ Unit tests for the comparable.base module.
 
 import logging
 import unittest
+from unittest.mock import patch, Mock, MagicMock
 
 from comparable.base import _Base, Similarity
+from comparable.base import SimpleComparable, CompoundComparable
 
 from comparable.test import TestCase
 from comparable.test import settings
 
 
 class TestBase(TestCase):  # pylint: disable=R0904
-    """Tests for the Base class."""
+    """Unit tests for the Base class."""
 
     class Sample(_Base):  # pylint: disable=R0903
         """Test class to show __repr__ formatting."""
@@ -54,7 +56,7 @@ class TestBase(TestCase):  # pylint: disable=R0904
 
 
 class TestSimilarity(TestCase):  # pylint: disable=R0904
-    """Tests for the Similarity class."""
+    """Unit tests for the Similarity class."""
 
     def test_str(self):
         """Verify similarity objects can be represented as strings."""
@@ -172,6 +174,32 @@ class TestSimilarity(TestCase):  # pylint: disable=R0904
     def test_abs(self):
         """Verify absolute value works for similarities."""
         self.assertEqual(Similarity(0.42), abs(Similarity(-0.42)))
+
+
+class TestSimpleComparable(TestCase):  # pylint: disable=R0904
+    """Unit tests for the SimpleComparable class."""
+
+    class Simple(SimpleComparable):
+        equality = Mock()
+        similarity = Mock()
+
+    def setUp(self):
+        self.obj1 = self.Simple()
+        self.obj2 = self.Simple()
+
+    def test_equality_true(self):
+        """Verify two simple comparables can be compared for equality."""
+        with patch.object(self.Simple, 'equality', Mock(return_value=True)):
+            equality = (self.obj1 == self.obj2)
+            self.obj1.equality.assert_called_once_with(self.obj2)
+            self.assertTrue(equality)
+
+    def test_equality_false(self):
+        """Verify two simple comparables can be compared for non-equality."""
+        with patch.object(self.Simple, 'equality', Mock(return_value=False)):
+            equality = (self.obj1 == self.obj2)
+            self.obj1.equality.assert_called_once_with(self.obj2)
+            self.assertFalse(equality)
 
 
 if __name__ == '__main__':
