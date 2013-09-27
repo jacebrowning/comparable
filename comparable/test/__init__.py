@@ -4,6 +4,7 @@
 Integration tests for comparable package.
 """
 
+import logging
 import unittest
 
 

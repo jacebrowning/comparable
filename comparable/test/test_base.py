@@ -175,6 +175,10 @@ class TestSimilarity(TestCase):  # pylint: disable=R0904
         """Verify absolute value works for similarities."""
         self.assertEqual(Similarity(0.42), abs(Similarity(-0.42)))
 
+    def test_round(self):
+        """Verify a similarity can be rounded."""
+        self.assertEqual(0.42, round(Similarity(0.421), 2))
+
 
 class TestSimpleComparable(TestCase):  # pylint: disable=R0904
     """Unit tests for the SimpleComparable class."""

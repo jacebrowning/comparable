@@ -98,6 +98,9 @@ class Similarity(_Base):
     def __abs__(self):
         return Similarity(abs(self.value), threshold=self.threshold)
 
+    def __round__(self, digits):
+        return Similarity(round(self.value, digits), threshold=self.threshold)
+
 
 class _Indent():
     """Indent formatter for logging calls."""
@@ -315,6 +318,8 @@ class SimpleComparable(Comparable):
         """A simple comparable does not use a similarity threshold.
         """
         raise AttributeError()
+
+    Similarity = Similarity  # constructor to create new similarities
 
 
 class CompoundComparable(Comparable):
