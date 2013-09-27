@@ -183,7 +183,8 @@ class TestSimilarity(TestCase):  # pylint: disable=R0904
 class TestSimpleComparable(TestCase):  # pylint: disable=R0904
     """Unit tests for the SimpleComparable class."""
 
-    class Simple(SimpleComparable):
+    class Simple(SimpleComparable):  # pylint: disable=W0223
+        """An implementation of SimpleComparable using mocks."""
         equality = Mock()
         similarity = Mock()
 
@@ -229,11 +230,13 @@ class TestSimpleComparable(TestCase):  # pylint: disable=R0904
 
 
 class TestCompoundComparable(TestCase):  # pylint: disable=R0904
-    """Unit tests for the CompoundComparable class."""
+    """Unit tests for the CompoundComparable class."""  # pylint: disable=C0103
 
-    class Compound(CompoundComparable):
+    class Compound(CompoundComparable):  # pylint: disable=W0223
+        """An implementation of CompoundComparable using mocks."""
 
-        class Simple(SimpleComparable):
+        class Simple(SimpleComparable):  # pylint: disable=W0223
+            """An implementation of SimpleComparable using mocks."""
 
             def __repr__(self):
                 return "<Simple {0}>".format(id(self))

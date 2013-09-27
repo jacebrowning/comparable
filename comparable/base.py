@@ -8,7 +8,7 @@ import logging
 from abc import ABCMeta, abstractmethod, abstractproperty
 
 
-class _Base(object):
+class _Base(object):  # pylint: disable=R0903
     """Shared base class."""
 
     def _repr(self, *args, **kwargs):
@@ -102,7 +102,7 @@ class Similarity(_Base):
         return Similarity(round(self.value, digits), threshold=self.threshold)
 
 
-class _Indent():
+class _Indent(object):
     """Indent formatter for logging calls."""
 
     def __init__(self):
@@ -299,7 +299,7 @@ class Comparable(_Base, metaclass=ABCMeta):
         return sim
 
 
-class SimpleComparable(Comparable):
+class SimpleComparable(Comparable):  # pylint: disable=W0223
     """Abstract Base Class for objects that are directly comparable.
 
     Subclasses must override the 'equality' and 'similarity' methods
@@ -321,7 +321,7 @@ class SimpleComparable(Comparable):
     Similarity = Similarity  # constructor to create new similarities
 
 
-class CompoundComparable(Comparable):
+class CompoundComparable(Comparable):  # pylint: disable=W0223
     """Abstract Base Class for objects that are comparable by attributes.
 
     Subclasses must override the 'equality_list', 'similarity_dict', and

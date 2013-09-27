@@ -10,7 +10,7 @@ from difflib import SequenceMatcher
 from comparable import SimpleComparable
 
 
-class _Simple(SimpleComparable):
+class _Simple(SimpleComparable):  # pylint: disable=W0223
     """SimpleComparable with common magic methods implemented."""
 
     def __init__(self, value):
