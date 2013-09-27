@@ -99,6 +99,29 @@ class Similarity(_Base):
         return Similarity(abs(self.value), threshold=self.threshold)
 
 
+def _log_cmp(obj1, obj2, op, cname=None, aname=None, result=None, level=None):
+    """Log the objects being compared and the result.
+    @param obj1: first object
+    @param obj2: second object
+    @param op: operation being performed ('=' or '%')
+    @param cname: name of class (when attributes are being compared)
+    @param aname: name of attribute (when attributes are being compared)
+    @param result: outcome of comparison
+    @param level: logging level
+    """
+    fmt = "{o1} {op} {o2} : {r}"
+    if cname or aname:
+        assert cname and aname  # both must be specified
+        fmt = "{c}.{a}: " + fmt
+        level = level or logging.DEBUG
+    else:
+        level = level or logging.INFO
+    if result is None:
+        result = '...'
+    logging.log(level, fmt.format(o1=repr(obj1), o2=repr(obj2),
+                                  c=cname, a=aname, op=op, r=result))
+
+
 def equal(obj1, obj2):
     """Calculate equality between two (Comparable) objects.
     """
@@ -115,29 +138,6 @@ def similar(obj1, obj2):
     similarity = obj1.similarity(obj2)
     _log_cmp(obj1, obj2, '%', result=similarity)
     return similarity
-
-
-def _log_cmp(obj1, obj2, op, cname=None, aname=None, result=None, level=None):
-    """Log the objects being compared and the result.
-    @param obj1: first object
-    @param obj2: second object
-    @param op: operation being performed ('=' or '%')
-    @param cname: name of class (when attributes are being compared)
-    @param aname: name of attribute (when attributes are being compared)
-    @param result: outcome of comparison
-    @param level: logging level
-    """
-    fmt = "{o1} ?{op} {o2} : {r}"
-    if cname or aname:
-        assert cname and aname  # both must be specified
-        fmt = "{c}:{a}: " + fmt
-        level = level or logging.DEBUG
-    else:
-        level = level or logging.INFO
-    if result is None:
-        result = '...'
-    logging.log(level, fmt.format(o1=repr(obj1), o2=repr(obj2),
-                                  c=cname, a=aname, op=op, r=result))
 
 
 class Comparable(_Base, metaclass=ABCMeta):
@@ -234,12 +234,12 @@ class Comparable(_Base, metaclass=ABCMeta):
 
             # Handle for missing attributes
             try:
-                attr1 = attr2 = "<?>"
+                attr1 = attr2 = '?'
                 attr1 = getattr(self, aname)
                 attr2 = getattr(other, aname)
             except AttributeError:
                 _log_cmp(attr1, attr2, '%', cname=cname, aname=aname,
-                         result="skipped because an attribute is missing")
+                         result="an attribute is missing")
                 continue
             else:
                 _log_cmp(attr1, attr2, '%', cname=cname, aname=aname)
@@ -247,7 +247,7 @@ class Comparable(_Base, metaclass=ABCMeta):
             # Handle empty attributes
             if attr1 is None or attr2 is None:
                 _log_cmp(attr1, attr2, '%', cname=cname, aname=aname,
-                         result="skipped because an attribute is None")
+                         result="an attribute is None")
                 continue
 
             # Calculate similarity between the attributes
