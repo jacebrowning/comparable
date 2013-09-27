@@ -29,7 +29,7 @@ class _Simple(SimpleComparable):  # pylint: disable=W0223
 class Number(_Simple):
     """Comparable positive number."""
 
-    similarity_threshold = 0.99999  # only care about the first 3 decimals
+    similarity_threshold = 0.999  # 99.9% similar
 
     def __init__(self, value):
         super().__init__(value)

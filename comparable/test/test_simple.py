@@ -49,10 +49,10 @@ class TestNumber(TestCase):  # pylint: disable=R0904
 
     def test_threshold(self):
         """Verify the Number threshold is correct."""
-        self.assertTrue(Number(42) %
-                        Number(42.0001))
-        self.assertFalse(Number(42) %
-                         Number(42.0005))
+        self.assertTrue(Number(100) %
+                        Number(99.9))
+        self.assertFalse(Number(100) %
+                         Number(99.8))
 
 
 class TestText(TestCase):  # pylint: disable=R0904
