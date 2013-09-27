@@ -7,7 +7,7 @@ Unit tests for the comparable.basic module.
 import logging
 import unittest
 
-from comparable.simple import Number, Text
+from comparable.simple import Number, Text, TextEnum
 
 from comparable.test import TestCase, settings
 
@@ -68,6 +68,12 @@ class TestText(TestCase):  # pylint: disable=R0904
         obj2 = Text("def456")
         self.assertComparison(obj1, obj2, False, 0.00)
 
+    def test_close(self):
+        """Verify two similar texts can be compared."""
+        obj1 = Text("abcdefghijklmnopqrstuvwzyz")
+        obj2 = Text("Abcdefghijklmnopqrstuvwzyz")
+        self.assertComparison(obj1, obj2, False, 0.96)
+
     def test_one_empty(self):
         """Verify an empty text can be compared to a text."""
         obj1 = Text("")
@@ -84,6 +90,33 @@ class TestText(TestCase):  # pylint: disable=R0904
         """Verify the Text threshold is correct."""
         self.assertTrue(Text("Hello, world!") % Text("hello world"))
         self.assertFalse(Text("Hello, world!") % Text("hello worlds"))
+
+
+class TestEnum(TestCase):  # pylint: disable=R0904
+    """Integration tests for the TextEnum class."""
+
+    def test_identical(self):
+        """Verify two identical text enums can be compared."""
+        obj1 = TextEnum("abc123")
+        obj2 = TextEnum("abc123")
+        self.assertComparison(obj1, obj2, True, 1.00)
+
+    def test_different(self):
+        """Verify two different text enums can be compared."""
+        obj1 = TextEnum("abc123")
+        obj2 = TextEnum("def456")
+        self.assertComparison(obj1, obj2, False, 0.00)
+
+    def test_close(self):
+        """Verify two similar text enums can be compared."""
+        obj1 = TextEnum("abcdefghijklmnopqrstuvwzyz")
+        obj2 = TextEnum("Abcdefghijklmnopqrstuvwzyz")
+        self.assertComparison(obj1, obj2, False, 1.00)
+
+    def test_threshold(self):
+        """Verify the TextEnum threshold is correct."""
+        self.assertTrue(TextEnum("Hello, world!") % TextEnum("hello, world!"))
+        self.assertFalse(TextEnum("Hello, world!") % TextEnum("Hello, world"))
 
 
 if __name__ == '__main__':

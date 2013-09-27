@@ -26,7 +26,7 @@ class _Simple(SimpleComparable):
 
 
 class Number(_Simple):
-    """Comparable positive numerical type."""
+    """Comparable positive number."""
 
     similarity_threshold = 0.99999  # only care about the first 3 decimals
 
@@ -53,7 +53,7 @@ class Number(_Simple):
 
 
 class Text(_Simple):
-    """Comparable generic text type."""
+    """Comparable generic text."""
 
     similarity_threshold = 0.83  # "Hello, world!" ~ "hello world"
 
@@ -68,3 +68,18 @@ class Text(_Simple):
         ratio = SequenceMatcher(a=self.value, b=other.value).ratio()
         similarity = self.Similarity(ratio, self.similarity_threshold)
         return similarity
+
+
+class TextEnum(Text):
+    """Comparable case-insensitive textual enumeration."""
+
+    similarity_threshold = 1.0  # enumerations must match
+
+    def similarity(self, other):
+        """Get similarity as a ratio of the two numbers.
+        """
+        ratio = 1.0 if (str(self).lower() == str(other).lower()) else 0.0
+        similarity = self.Similarity(ratio, self.similarity_threshold)
+        return similarity
+
+
