@@ -102,19 +102,42 @@ class Similarity(_Base):
 def equal(obj1, obj2):
     """Calculate equality between two (Comparable) objects.
     """
-    logging.info("{} ?= {} : ...".format(repr(obj1), repr(obj2)))
+    _log_cmp(obj1, obj2, '=')
     equality = obj1.equality(obj2)
-    logging.info("{} ?= {} : {}".format(repr(obj1), repr(obj2), equality))
+    _log_cmp(obj1, obj2, '=', result=equality)
     return equality
 
 
 def similar(obj1, obj2):
     """Calculate similarity between two (Comparable) objects.
     """
-    logging.info("{} ?% {} : ...".format(repr(obj1), repr(obj2)))
+    _log_cmp(obj1, obj2, '%')
     similarity = obj1.similarity(obj2)
-    logging.info("{} ?% {} : {}".format(repr(obj1), repr(obj2), similarity))
+    _log_cmp(obj1, obj2, '%', result=similarity)
     return similarity
+
+
+def _log_cmp(obj1, obj2, op, cname=None, aname=None, result=None, level=None):
+    """Log the objects being compared and the result.
+    @param obj1: first object
+    @param obj2: second object
+    @param op: operation being performed ('=' or '%')
+    @param cname: name of class (when attributes are being compared)
+    @param aname: name of attribute (when attributes are being compared)
+    @param result: outcome of comparison
+    @param level: logging level
+    """
+    fmt = "{o1} ?{op} {o2} : {r}"
+    if cname or aname:
+        assert cname and aname  # both must be specified
+        fmt = "{c}:{a}: " + fmt
+        level = level or logging.DEBUG
+    else:
+        level = level or logging.INFO
+    if result is None:
+        result = '...'
+    logging.log(level, fmt.format(o1=repr(obj1), o2=repr(obj2),
+                                  c=cname, a=aname, op=op, r=result))
 
 
 class Comparable(_Base, metaclass=ABCMeta):
@@ -149,37 +172,6 @@ class Comparable(_Base, metaclass=ABCMeta):
         """
         return []
 
-    @abstractmethod
-    def equality(self, other, names=None):
-        """Compare two objects for equality.
-        @param self: first object to compare
-        @param other: second object to compare
-        @param attrs: list of attributes names to consider
-        @return: boolean result of comparison
-        """
-
-        if names is None:
-            names = self.equality_list
-
-        # if type(self) != type(other):
-        #    logging.warning("types are different")
-        #    return False
-
-        for name in names:
-            try:
-                attr1 = getattr(self, name)
-                attr2 = getattr(other, name)
-            except AttributeError as error:
-                logging.debug("{}.{}: {}".format(self.__class__.__name__, name, error))
-                return False
-            logging.debug("{}.{}: {} ?= {} : ...".format(self.__class__.__name__, name, repr(attr1), repr(attr2)))
-            equality = (attr1 == attr2)
-            logging.debug("{}.{}: {} ?= {} : {}".format(self.__class__.__name__, name, repr(attr1), repr(attr2), equality))
-            if not equality:
-                return False
-
-        return True
-
     @abstractproperty
     def similarity_dict(self):  # pragma: no cover, abstract
         """Get a dictionary of attribute {name: weight} to consider in
@@ -195,6 +187,34 @@ class Comparable(_Base, metaclass=ABCMeta):
         return 1.0
 
     @abstractmethod
+    def equality(self, other, names=None):
+        """Compare two objects for equality.
+        @param self: first object to compare
+        @param other: second object to compare
+        @param attrs: list of attributes names to consider
+        @return: boolean result of comparison
+        """
+        if names is None:
+            names = self.equality_list
+
+        # Compare specified attributes for equality
+        cname = self.__class__.__name__
+        for aname in names:
+            try:
+                attr1 = getattr(self, aname)
+                attr2 = getattr(other, aname)
+            except AttributeError as error:
+                logging.debug("{}.{}: {}".format(cname, aname, error))
+                return False
+            _log_cmp(attr1, attr2, '=', cname=cname, aname=aname)
+            eq = (attr1 == attr2)
+            _log_cmp(attr1, attr2, '=', cname=cname, aname=aname, result=eq)
+            if not eq:
+                return False
+
+        return True
+
+    @abstractmethod
     def similarity(self, other, names=None):
         """Compare two objects for similarity.
         @param self: first object to compare
@@ -205,40 +225,48 @@ class Comparable(_Base, metaclass=ABCMeta):
         if names is None:
             names = self.similarity_dict
 
-        similarity = Similarity(0.0, self.similarity_threshold)
+        sim = Similarity(0.0, self.similarity_threshold)
         total = 0.0
 
-        # Calculate similarity ratio
-        for name, weight in names.items():
+        # Calculate similarity ratio for specified attributes
+        cname = self.__class__.__name__
+        for aname, weight in names.items():
+
+            # Handle for missing attributes
             try:
-                attr1 = getattr(self, name)
-                attr2 = getattr(other, name)
+                attr1 = attr2 = "<?>"
+                attr1 = getattr(self, aname)
+                attr2 = getattr(other, aname)
             except AttributeError:
-                logging.debug("{}.{}: skipped due to missing".format(self.__class__.__name__, name))
+                _log_cmp(attr1, attr2, '%', cname=cname, aname=aname,
+                         result="skipped because an attribute is missing")
                 continue
-            logging.debug("{}.{}: {} ?% {} : ...".format(self.__class__.__name__, name, repr(attr1), repr(attr2)))
+            else:
+                _log_cmp(attr1, attr2, '%', cname=cname, aname=aname)
+
+            # Handle empty attributes
             if attr1 is None or attr2 is None:
-                logging.debug("{}.{}: skipped due to None".format(self.__class__.__name__, name))
+                _log_cmp(attr1, attr2, '%', cname=cname, aname=aname,
+                         result="skipped because an attribute is None")
                 continue
-            # if not weight:
-            #     logging.debug("{}.{}: skipped due to no weight".format(self.__class__.__name__, name))
-            #     continue
-            attr_similarity = (attr1 % attr2)
-            logging.debug("{}.{}: {} ?% {} : {}".format(self.__class__.__name__, name, repr(attr1), repr(attr2), attr_similarity))
+
+            # Calculate similarity between the attributes
+            attr_sim = (attr1 % attr2)
+            _log_cmp(attr1, attr2, '%', cname=cname, aname=aname, result=sim)
             total += weight
-            similarity += attr_similarity * weight
+            sim += attr_sim * weight
 
         if total:
-            similarity *= (1.0 / total)  # scale ratio so the total is 1.0
+            sim *= (1.0 / total)  # scale ratio so the total is 1.0
 
-        return similarity
+        return sim
 
 
 class SimpleComparable(Comparable):
     """Abstract Base Class for objects that are directly comparable.
 
     Subclasses must override the 'equality' and 'similarity' methods
-    to return a bool and 'Similarity' object, respectively.
+    to return a 'bool' and 'Similarity' object, respectively.
     """
 
     def equality_list(self):  # pragma: no cover, abstract
