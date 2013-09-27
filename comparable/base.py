@@ -99,8 +99,33 @@ class Similarity(_Base):
         return Similarity(abs(self.value), threshold=self.threshold)
 
 
+class _Indent():
+    """Indent formatter for logging calls."""
+
+    def __init__(self):
+        self.level = 0
+
+    def __str__(self):
+        return '| ' * self.level
+
+    def more(self):
+        """Increase the indent level."""
+        self.level += 1
+
+    def less(self):
+        """Decrease the indent level."""
+        self.level = max(self.level - 1, 0)
+
+_indent = _Indent()
+
+
 def _log_cmp(obj1, obj2, op, cname=None, aname=None, result=None, level=None):
     """Log the objects being compared and the result.
+
+    When no result object is specified, subsequence calls will have an
+    increased indentation level. The indentation level is decreased
+    once a result object is provided.
+
     @param obj1: first object
     @param obj2: second object
     @param op: operation being performed ('=' or '%')
@@ -116,10 +141,17 @@ def _log_cmp(obj1, obj2, op, cname=None, aname=None, result=None, level=None):
         level = level or logging.DEBUG
     else:
         level = level or logging.INFO
+
     if result is None:
         result = '...'
-    logging.log(level, fmt.format(o1=repr(obj1), o2=repr(obj2),
-                                  c=cname, a=aname, op=op, r=result))
+        indent = str(_indent)
+        _indent.more()
+    else:
+        _indent.less()
+        indent = str(_indent)
+
+    logging.log(level, indent + fmt.format(o1=repr(obj1), o2=repr(obj2),
+                                           c=cname, a=aname, op=op, r=result))
 
 
 def equal(obj1, obj2):
