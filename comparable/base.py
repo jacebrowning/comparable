@@ -102,18 +102,18 @@ class Similarity(_Base):
 def equal(obj1, obj2):
     """Calculate equality between two (Comparable) objects.
     """
-    logging.info("{} == {} : ...".format(repr(obj1), repr(obj2)))
+    logging.info("{} ?= {} : ...".format(repr(obj1), repr(obj2)))
     equality = obj1.equality(obj2)
-    logging.info("{} == {} : {}".format(repr(obj1), repr(obj2), equality))
+    logging.info("{} ?= {} : {}".format(repr(obj1), repr(obj2), equality))
     return equality
 
 
 def similar(obj1, obj2):
     """Calculate similarity between two (Comparable) objects.
     """
-    logging.info("{} % {} : ...".format(repr(obj1), repr(obj2)))
+    logging.info("{} ?% {} : ...".format(repr(obj1), repr(obj2)))
     similarity = obj1.similarity(obj2)
-    logging.info("{} % {} : {}".format(repr(obj1), repr(obj2), similarity))
+    logging.info("{} ?% {} : {}".format(repr(obj1), repr(obj2), similarity))
     return similarity
 
 
@@ -143,7 +143,7 @@ class Comparable(_Base, metaclass=ABCMeta):
         return similar(self, other)
 
     @abstractproperty
-    def equality_list(self):
+    def equality_list(self):  # pragma: no cover, abstract
         """Get the list of attributes names to consider in
         "equality" calculations.
         """
@@ -154,37 +154,37 @@ class Comparable(_Base, metaclass=ABCMeta):
         """Compare two objects for equality.
         @param self: first object to compare
         @param other: second object to compare
-        @param attrs: list (or dict) of attributes names to consider
+        @param attrs: list of attributes names to consider
         @return: boolean result of comparison
         """
 
         if names is None:
-            names = self.SIM_ATTRS
+            names = self.equality_list
 
-        if type(self) != type(other):
-            logging.warning("types are different")
-            return False
+        # if type(self) != type(other):
+        #    logging.warning("types are different")
+        #    return False
 
         for name in names:
-            attr_1 = getattr(self, name)
-            attr_2 = getattr(other, name)
-            logging.debug("{}.{}: {} == {} : ...".format(self.__class__.__name__, name, repr(attr_1), repr(attr_2)))
-            equality = attr_1 == attr_2
-            logging.debug("{}.{}: {} == {} : {}".format(self.__class__.__name__, name, repr(attr_1), repr(attr_2), equality))
+            attr1 = getattr(self, name)
+            attr2 = getattr(other, name)
+            logging.debug("{}.{}: {} ?= {} : ...".format(self.__class__.__name__, name, repr(attr1), repr(attr2)))
+            equality = (attr1 == attr2)
+            logging.debug("{}.{}: {} ?= {} : {}".format(self.__class__.__name__, name, repr(attr1), repr(attr2), equality))
             if not equality:
                 return False
 
         return True
 
     @abstractproperty
-    def similarity_dict(self):
+    def similarity_dict(self):  # pragma: no cover, abstract
         """Get a dictionary of attribute {name: weight} to consider in
         "similarity" calculations.
         """
         return {}
 
     @abstractproperty
-    def similarity_threshold(self):
+    def similarity_threshold(self):  # pragma: no cover, abstract
         """Get the similarity threshold value for two objects to be
         considered "similar".
         """
@@ -199,28 +199,28 @@ class Comparable(_Base, metaclass=ABCMeta):
         @return: L{Similarity} result of comparison
         """
         if names is None:
-            names = self.SIM_ATTRS
+            names = self.similarity_dict
 
-        similarity = Similarity(0.0, self.THRESHOLD)
+        similarity = Similarity(0.0, self.similarity_threshold)
         total = 0.0
 
         # Calculate similarity ratio
         for name, weight in names.items():
             try:
-                attr_1 = getattr(self, name)
-                attr_2 = getattr(other, name)
+                attr1 = getattr(self, name)
+                attr2 = getattr(other, name)
             except AttributeError:
                 logging.debug("{}.{}: skipped due to missing".format(self.__class__.__name__, name))
                 continue
-            logging.debug("{}.{}: {} % {} : ...".format(self.__class__.__name__, name, repr(attr_1), repr(attr_2)))
-            if attr_1 is None or attr_2 is None:
+            logging.debug("{}.{}: {} ?% {} : ...".format(self.__class__.__name__, name, repr(attr1), repr(attr2)))
+            if attr1 is None or attr2 is None:
                 logging.debug("{}.{}: skipped due to None".format(self.__class__.__name__, name))
                 continue
-#             if not weight:
-#                 logging.debug("{}.{}: skipped due to no weight".format(self.__class__.__name__, name))
-#                 continue
-            attr_similarity = attr_1 % attr_2
-            logging.debug("{}.{}: {} % {} : {}".format(self.__class__.__name__, name, repr(attr_1), repr(attr_2), attr_similarity))
+            # if not weight:
+            #     logging.debug("{}.{}: skipped due to no weight".format(self.__class__.__name__, name))
+            #     continue
+            attr_similarity = (attr1 % attr2)
+            logging.debug("{}.{}: {} ?% {} : {}".format(self.__class__.__name__, name, repr(attr1), repr(attr2), attr_similarity))
             total += weight
             similarity += attr_similarity * weight
 
@@ -237,17 +237,17 @@ class SimpleComparable(Comparable):
     to return a bool and 'Similarity' object, respectively.
     """
 
-    def equality_list(self):
+    def equality_list(self):  # pragma: no cover, abstract
         """A simple comparable does not use an equality list.
         """
         raise AttributeError()
 
-    def similarity_dict(self):
+    def similarity_dict(self):  # pragma: no cover, abstract
         """A simple comparable does not use a similarity dict.
         """
         raise AttributeError()
 
-    def similarity_threshold(self):
+    def similarity_threshold(self):  # pragma: no cover, abstract
         """A simple comparable does not use a similarity threshold.
         """
         raise AttributeError()
@@ -264,9 +264,9 @@ class CompoundComparable(Comparable):
     def equality(self, other, *args, **kwargs):
         """A compound comparable's equality is based on attributes.
         """
-        super().equality(self, other, *args, **kwargs)
+        return super().equality(other, *args, **kwargs)
 
     def similarity(self, other, *args, **kwargs):
         """A compound comparable's similarity is based on attributes.
         """
-        super().similarity(self, other, *args, **kwargs)
+        return super().similarity(other, *args, **kwargs)

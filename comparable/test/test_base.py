@@ -8,7 +8,7 @@ import logging
 import unittest
 from unittest.mock import patch, Mock, MagicMock
 
-from comparable.base import _Base, Similarity
+from comparable.base import _Base, Similarity, equal, similar
 from comparable.base import SimpleComparable, CompoundComparable
 
 from comparable.test import TestCase
@@ -190,16 +190,117 @@ class TestSimpleComparable(TestCase):  # pylint: disable=R0904
     def test_equality_true(self):
         """Verify two simple comparables can be compared for equality."""
         with patch.object(self.Simple, 'equality', Mock(return_value=True)):
+            # Testing: ==
             equality = (self.obj1 == self.obj2)
-            self.obj1.equality.assert_called_once_with(self.obj2)
             self.assertTrue(equality)
+            self.obj1.equality.assert_called_once_with(self.obj2)
+            # Testing: !=
+            self.assertFalse(self.obj1 != self.obj2)
 
     def test_equality_false(self):
         """Verify two simple comparables can be compared for non-equality."""
         with patch.object(self.Simple, 'equality', Mock(return_value=False)):
+            # Testing: ==
             equality = (self.obj1 == self.obj2)
-            self.obj1.equality.assert_called_once_with(self.obj2)
             self.assertFalse(equality)
+            self.obj1.equality.assert_called_once_with(self.obj2)
+            # Testing: !=
+            self.assertTrue(self.obj1 != self.obj2)
+
+    def test_similarity_true(self):
+        """Verify two simple comparables can be compared for similarity."""
+        sim = Similarity(0.90, threshold=0.85)
+        with patch.object(self.Simple, 'similarity', Mock(return_value=sim)):
+            similarity = (self.obj1 % self.obj2)
+            self.assertTrue(similarity)
+            self.obj1.similarity.assert_called_once_with(self.obj2)
+
+    def test_similarity_false(self):
+        """Verify two simple comparables can be compared for non-similarity."""
+        sim = Similarity(0.90, threshold=0.95)
+        with patch.object(self.Simple, 'similarity', Mock(return_value=sim)):
+            similarity = (self.obj1 % self.obj2)
+            self.assertFalse(similarity)
+            self.obj1.similarity.assert_called_once_with(self.obj2)
+
+
+class TestCompoundComparable(TestCase):  # pylint: disable=R0904
+    """Unit tests for the CompoundComparable class."""
+
+    class Compound(CompoundComparable):
+
+        class Simple(SimpleComparable):
+
+            def __repr__(self):
+                return "<Simple {0}>".format(id(self))
+
+            equality = Mock()
+            similarity = Mock()
+
+        def __init__(self):
+            self.item1 = self.Simple()
+            self.item2 = self.Simple()
+
+        def __repr__(self):
+            return "<Compound {0}>".format(id(self))
+
+        equality_list = ['item1', 'item2']
+        similarity_dict = {'item1': 0.25, 'item2': 0.75}
+        similarity_threshold = 0.50
+
+    def setUp(self):
+        self.obj1 = self.Compound()
+        self.obj2 = self.Compound()
+
+    def test_equality_true(self):
+        """Verify two compound comparables can be compared for equality."""
+        self.obj1.item1.equality.return_value = True
+        self.obj1.item2.equality.return_value = True
+        # Testing: ==
+        equality = (self.obj1 == self.obj2)
+        self.assertTrue(equality)
+
+    def test_equality_false(self):
+        """Verify two compound comparables can be compared for non-equality."""
+        self.obj1.item1.equality.return_value = True
+        self.obj1.item2.equality.return_value = False
+        # Testing: ==
+        equality = (self.obj1 == self.obj2)
+        self.assertFalse(equality)
+
+    def test_similarity_true(self):
+        """Verify two compound comparables can be compared for similarity."""
+        self.obj1.item1.similarity.return_value = Similarity(0.0)
+        self.obj1.item2.similarity.return_value = Similarity(1.0)
+        # Testing: %
+        similarity = (self.obj1 % self.obj2)
+        self.assertTrue(similarity)
+
+    def test_similarity_false(self):
+        """Verify two compound comparables can be compared for non-similarity."""
+        self.obj1.item1.similarity.return_value = Similarity(1.0)
+        self.obj1.item2.similarity.return_value = Similarity(0.0)
+        # Testing: %
+        similarity = (self.obj1 % self.obj2)
+        self.assertFalse(similarity)
+
+
+class TestModule(TestCase):  # pylint: disable=R0904
+    """Unit tests for the module functions."""
+
+    def setUp(self):
+        self.obj1 = MagicMock()
+        self.obj2 = MagicMock()
+
+    def test_equal(self):
+        """Verify equality is invoked when calling equal()."""
+        equal(self.obj1, self.obj2)
+        self.obj1.equality.assert_called_once_with(self.obj2)
+
+    def test_similar(self):
+        """Verify similarity is invoked when calling similar()."""
+        similar(self.obj1, self.obj2)
+        self.obj1.similarity.assert_called_once_with(self.obj2)
 
 
 if __name__ == '__main__':
