@@ -166,8 +166,12 @@ class Comparable(_Base, metaclass=ABCMeta):
         #    return False
 
         for name in names:
-            attr1 = getattr(self, name)
-            attr2 = getattr(other, name)
+            try:
+                attr1 = getattr(self, name)
+                attr2 = getattr(other, name)
+            except AttributeError as error:
+                logging.debug("{}.{}: {}".format(self.__class__.__name__, name, error))
+                return False
             logging.debug("{}.{}: {} ?= {} : ...".format(self.__class__.__name__, name, repr(attr1), repr(attr2)))
             equality = (attr1 == attr2)
             logging.debug("{}.{}: {} ?= {} : {}".format(self.__class__.__name__, name, repr(attr1), repr(attr2), equality))

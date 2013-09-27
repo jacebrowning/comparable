@@ -234,8 +234,8 @@ class TestCompoundComparable(TestCase):  # pylint: disable=R0904
             def __repr__(self):
                 return "<Simple {0}>".format(id(self))
 
-            equality = Mock()
-            similarity = Mock()
+            equality = None  # replaced with Mock after initialization
+            similarity = None  # replaced with Mock after initialization
 
         def __init__(self):
             self.item1 = self.Simple()
@@ -250,7 +250,15 @@ class TestCompoundComparable(TestCase):  # pylint: disable=R0904
 
     def setUp(self):
         self.obj1 = self.Compound()
+        self.obj1.item1.equality = Mock()
+        self.obj1.item1.similarity = Mock()
+        self.obj1.item2.equality = Mock()
+        self.obj1.item2.similarity = Mock()
         self.obj2 = self.Compound()
+        self.obj2.item1.equality = Mock()
+        self.obj2.item1.similarity = Mock()
+        self.obj2.item2.equality = Mock()
+        self.obj2.item2.similarity = Mock()
 
     def test_equality_true(self):
         """Verify two compound comparables can be compared for equality."""
@@ -259,6 +267,8 @@ class TestCompoundComparable(TestCase):  # pylint: disable=R0904
         # Testing: ==
         equality = (self.obj1 == self.obj2)
         self.assertTrue(equality)
+        self.obj1.item1.equality.assert_called_once_with(self.obj2.item1)
+        self.obj1.item2.equality.assert_called_once_with(self.obj2.item2)
 
     def test_equality_false(self):
         """Verify two compound comparables can be compared for non-equality."""
@@ -267,6 +277,8 @@ class TestCompoundComparable(TestCase):  # pylint: disable=R0904
         # Testing: ==
         equality = (self.obj1 == self.obj2)
         self.assertFalse(equality)
+        self.obj1.item1.equality.assert_called_once_with(self.obj2.item1)
+        self.obj1.item2.equality.assert_called_once_with(self.obj2.item2)
 
     def test_similarity_true(self):
         """Verify two compound comparables can be compared for similarity."""
@@ -275,6 +287,9 @@ class TestCompoundComparable(TestCase):  # pylint: disable=R0904
         # Testing: %
         similarity = (self.obj1 % self.obj2)
         self.assertTrue(similarity)
+        self.assertEqual(0.75, similarity)
+        self.obj1.item1.similarity.assert_called_once_with(self.obj2.item1)
+        self.obj1.item2.similarity.assert_called_once_with(self.obj2.item2)
 
     def test_similarity_false(self):
         """Verify two compound comparables can be compared for non-similarity."""
@@ -283,6 +298,40 @@ class TestCompoundComparable(TestCase):  # pylint: disable=R0904
         # Testing: %
         similarity = (self.obj1 % self.obj2)
         self.assertFalse(similarity)
+        self.assertEqual(0.25, similarity)
+        self.obj1.item1.similarity.assert_called_once_with(self.obj2.item1)
+        self.obj1.item2.similarity.assert_called_once_with(self.obj2.item2)
+
+    def test_equality_missing_attribute(self):
+        """Verify a missing attribute makes equality false."""
+        self.obj1.item1.equality.return_value = True
+        self.obj1.item2.equality.return_value = True
+        del self.obj2.item2
+        # Testing: ==
+        equality = (self.obj1 == self.obj2)
+        self.assertFalse(equality)
+
+    # TODO: is this the desired behavior for missing attributes?
+    def test_similarity_missing_attribute(self):
+        """Verify a missing attribute in not included in similarity."""
+        self.obj1.item1.similarity.return_value = Similarity(1.0)
+        self.obj1.item2.similarity.return_value = Similarity(1.0)
+        del self.obj2.item2
+        # Testing: %
+        similarity = (self.obj1 % self.obj2)
+        self.assertTrue(similarity)
+        self.assertEqual(1.0, similarity)
+
+    # TODO: is this the desired behavior for empty attributes?
+    def test_similarity_empty_attribute(self):
+        """Verify an empty attribute in not included in similarity."""
+        self.obj1.item1.similarity.return_value = Similarity(1.0)
+        self.obj1.item2.similarity.return_value = Similarity(1.0)
+        self.obj2.item2 = None
+        # Testing: %
+        similarity = (self.obj1 % self.obj2)
+        self.assertTrue(similarity)
+        self.assertEqual(1.0, similarity)
 
 
 class TestModule(TestCase):  # pylint: disable=R0904
