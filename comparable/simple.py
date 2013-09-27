@@ -4,6 +4,8 @@
 Class definitions for simple comparable types.
 """
 
+from difflib import SequenceMatcher
+
 from comparable import SimpleComparable
 
 
@@ -46,5 +48,23 @@ class Number(_Simple):
             ratio = float(numerator) / denominator
         except ZeroDivisionError:
             ratio = 0.0 if numerator else 1.0
+        similarity = self.Similarity(ratio, self.similarity_threshold)
+        return similarity
+
+
+class Text(_Simple):
+    """Comparable generic text type."""
+
+    similarity_threshold = 0.83  # "Hello, world!" ~ "hello world"
+
+    def equality(self, other):
+        """Get equality using string comparison.
+        """
+        return str(self) == str(other)
+
+    def similarity(self, other):
+        """Get similarity as a ratio of the two numbers.
+        """
+        ratio = SequenceMatcher(a=self.value, b=other.value).ratio()
         similarity = self.Similarity(ratio, self.similarity_threshold)
         return similarity

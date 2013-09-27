@@ -178,13 +178,15 @@ def similar(obj1, obj2):
 class Comparable(_Base, metaclass=ABCMeta):
     """Abstract Base Class for objects that are comparable.
 
-    Subclasses directly comparable should override the 'equality' and
+    Subclasses directly comparable must override the 'equality' and
     'similarity' methods to return a bool and 'Similarity' object,
     respectively.
 
-    Subclasses comparable by attributes should override the
-    'equality_list', 'similarity_dict', and 'similarity_threshold'
-    properties to define which (Comparable) attributes should be considered.
+    Subclasses comparable by attributes must override the
+    'equality_list' and 'similarity_dict' properties to define which
+    (Comparable) attributes should be considered. They may also
+    override the 'similarity_threshold' property to change the default
+    threshold.
     """
 
     def __eq__(self, other):
@@ -214,7 +216,7 @@ class Comparable(_Base, metaclass=ABCMeta):
         """
         return {}
 
-    @abstractproperty
+    @property
     def similarity_threshold(self):  # pragma: no cover, abstract
         """Get the similarity threshold value for two objects to be
         considered "similar".
@@ -304,18 +306,15 @@ class SimpleComparable(Comparable):
     to return a 'bool' and 'Similarity' object, respectively.
     """
 
+    @property
     def equality_list(self):  # pragma: no cover, abstract
         """A simple comparable does not use an equality list.
         """
         raise AttributeError()
 
+    @property
     def similarity_dict(self):  # pragma: no cover, abstract
         """A simple comparable does not use a similarity dict.
-        """
-        raise AttributeError()
-
-    def similarity_threshold(self):  # pragma: no cover, abstract
-        """A simple comparable does not use a similarity threshold.
         """
         raise AttributeError()
 

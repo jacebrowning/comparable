@@ -7,7 +7,7 @@ Unit tests for the comparable.basic module.
 import logging
 import unittest
 
-from comparable.simple import Number
+from comparable.simple import Number, Text
 
 from comparable.test import TestCase, settings
 
@@ -51,6 +51,39 @@ class TestNumber(TestCase):  # pylint: disable=R0904
     def test_str(self):
         """Verify a Number can be converted to a string."""
         self.assertEqual("42.0", str(Number(42.0)))
+
+
+class TestText(TestCase):  # pylint: disable=R0904
+    """Integration tests for the Text class."""
+
+    def test_identical(self):
+        """Verify two identical texts can be compared."""
+        obj1 = Text("abc123")
+        obj2 = Text("abc123")
+        self.assertComparison(obj1, obj2, True, 1.00)
+
+    def test_different(self):
+        """Verify two different texts can be compared."""
+        obj1 = Text("abc123")
+        obj2 = Text("def456")
+        self.assertComparison(obj1, obj2, False, 0.00)
+
+    def test_one_empty(self):
+        """Verify an empty text can be compared to a text."""
+        obj1 = Text("")
+        obj2 = Text("def456")
+        self.assertComparison(obj1, obj2, False, 0.00)
+
+    def test_both_empty(self):
+        """Verify two empty texts can be compared."""
+        obj1 = Text("")
+        obj2 = Text("")
+        self.assertComparison(obj1, obj2, True, 1.00)
+
+    def test_threshold(self):
+        """Verify the Text threshold is correct."""
+        self.assertTrue(Text("Hello, world!") % Text("hello world"))
+        self.assertFalse(Text("Hello, world!") % Text("hello worlds"))
 
 
 if __name__ == '__main__':
