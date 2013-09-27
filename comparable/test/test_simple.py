@@ -7,7 +7,7 @@ Unit tests for the comparable.basic module.
 import logging
 import unittest
 
-from comparable.simple import Number, Text, TextEnum
+from comparable.simple import Number, Text, TextEnum, TextTitle
 
 from comparable.test import TestCase, settings
 
@@ -43,14 +43,16 @@ class TestNumber(TestCase):  # pylint: disable=R0904
         """Verify that a number can only be positive."""
         self.assertRaises(ValueError, Number, -1)
 
-    def test_threshold(self):
-        """Verify the Number threshold is correct."""
-        self.assertTrue(Number(42) % Number(42.0001))
-        self.assertFalse(Number(42) % Number(42.0005))
-
     def test_str(self):
         """Verify a Number can be converted to a string."""
         self.assertEqual("42.0", str(Number(42.0)))
+
+    def test_threshold(self):
+        """Verify the Number threshold is correct."""
+        self.assertTrue(Number(42) %
+                        Number(42.0001))
+        self.assertFalse(Number(42) %
+                         Number(42.0005))
 
 
 class TestText(TestCase):  # pylint: disable=R0904
@@ -88,8 +90,10 @@ class TestText(TestCase):  # pylint: disable=R0904
 
     def test_threshold(self):
         """Verify the Text threshold is correct."""
-        self.assertTrue(Text("Hello, world!") % Text("hello world"))
-        self.assertFalse(Text("Hello, world!") % Text("hello worlds"))
+        self.assertTrue(Text("Hello, world!") %
+                        Text("hello world"))
+        self.assertFalse(Text("Hello, world!") %
+                         Text("hello worlds"))
 
 
 class TestEnum(TestCase):  # pylint: disable=R0904
@@ -115,8 +119,39 @@ class TestEnum(TestCase):  # pylint: disable=R0904
 
     def test_threshold(self):
         """Verify the TextEnum threshold is correct."""
-        self.assertTrue(TextEnum("Hello, world!") % TextEnum("hello, world!"))
-        self.assertFalse(TextEnum("Hello, world!") % TextEnum("Hello, world"))
+        self.assertTrue(TextEnum("Hello, world!") %
+                        TextEnum("hello, world!"))
+        self.assertFalse(TextEnum("Hello, world!") %
+                         TextEnum("Hello, world"))
+
+
+class TestTextTitle(TestCase):  # pylint: disable=R0904
+    """Integration tests for the TextTitle class."""
+
+    def test_identical(self):
+        """Verify two identical text titles can be compared."""
+        obj1 = TextTitle("The Cat and the Hat")
+        obj2 = TextTitle("The Cat and the Hat")
+        self.assertComparison(obj1, obj2, True, 1.00)
+
+    def test_different(self):
+        """Verify two different text titles can be compared."""
+        obj1 = TextTitle("The Cat and the Hat")
+        obj2 = TextTitle("A Clockwork Orange")
+        self.assertComparison(obj1, obj2, False, 0.32)
+
+    def test_close(self):
+        """Verify two similar text titles can be compared."""
+        obj1 = TextTitle("The Cat and the Hat")
+        obj2 = TextTitle("The Cat & The Hat")
+        self.assertComparison(obj1, obj2, False, 1.00)
+
+    def test_threshold(self):
+        """Verify the TextTitle threshold is correct."""
+        self.assertTrue(TextTitle("The Cat and the Hat") %
+                        TextTitle("cat an' the hat"))
+        self.assertFalse(TextTitle("The Cat and the Hat") %
+                         TextTitle("cat and hat"))
 
 
 if __name__ == '__main__':
