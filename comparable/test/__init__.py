@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Integration tests for comparable package.
+Tests for comparable package.
 """
 
 import logging

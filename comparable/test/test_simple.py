@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Unit tests for the comparable.basic module.
+Tests for the comparable.simple module.
 """
 
 import logging
