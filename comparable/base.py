@@ -189,6 +189,8 @@ class Comparable(_Base, metaclass=ABCMeta):
     threshold.
     """
 
+    Similarity = Similarity  # constructor to create new similarities
+
     def __eq__(self, other):
         """Maps the '==' operator to be a shortcut for "equality".
         """
@@ -224,19 +226,19 @@ class Comparable(_Base, metaclass=ABCMeta):
         return 1.0
 
     @abstractmethod
-    def equality(self, other, names=None):
+    def equality(self, other, equality_list=None):
         """Compare two objects for equality.
         @param self: first object to compare
         @param other: second object to compare
-        @param attrs: list of attributes names to consider
+        @param equality_list: list of attributes names to consider
         @return: boolean result of comparison
         """
-        if names is None:
-            names = self.equality_list
+        if equality_list is None:
+            equality_list = self.equality_list
 
         # Compare specified attributes for equality
         cname = self.__class__.__name__
-        for aname in names:
+        for aname in equality_list:
             try:
                 attr1 = getattr(self, aname)
                 attr2 = getattr(other, aname)
@@ -252,22 +254,22 @@ class Comparable(_Base, metaclass=ABCMeta):
         return True
 
     @abstractmethod
-    def similarity(self, other, names=None):
+    def similarity(self, other, similarity_dict=None):
         """Compare two objects for similarity.
         @param self: first object to compare
         @param other: second object to compare
-        @param names: dictionary of attribute {name: weight} to consider
+        @param similarity_dict: dict of attribute {name: weight} to consider
         @return: L{Similarity} result of comparison
         """
-        if names is None:
-            names = self.similarity_dict
+        if similarity_dict is None:
+            similarity_dict = self.similarity_dict
 
         sim = Similarity(0.0, self.similarity_threshold)
         total = 0.0
 
         # Calculate similarity ratio for specified attributes
         cname = self.__class__.__name__
-        for aname, weight in names.items():
+        for aname, weight in similarity_dict.items():
 
             # Handle for missing attributes
             try:
@@ -317,8 +319,6 @@ class SimpleComparable(Comparable):  # pylint: disable=W0223
         """A simple comparable does not use a similarity dict.
         """
         raise AttributeError()
-
-    Similarity = Similarity  # constructor to create new similarities
 
 
 class CompoundComparable(Comparable):  # pylint: disable=W0223
