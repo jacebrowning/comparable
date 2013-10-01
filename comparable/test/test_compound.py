@@ -19,6 +19,7 @@ class TestGroup(TestCase):  # pylint: disable=R0904
     def test_attributes(self):
         """Verify __getattr__ behaves correctly."""
         self.assertRaises(AttributeError, getattr, Group([]), 'fake')
+        self.assertRaises(AttributeError, getattr, Group([]), 'itemA')
         self.assertRaises(AttributeError, getattr, Group([]), 'item1')
 
     def test_identical(self):

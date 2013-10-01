@@ -23,19 +23,25 @@ class Group(CompoundComparable):
         self.equality_list = names
         self.similarity_dict = {name: 1 for name in names}
 
-    # TODO: refactor
     def __getattr__(self, name):
         """Allows self.items[<i>] to be accessed as self.item<i+1>.
         """
         if name.startswith('item'):
             try:
-                return self.items[int(name.replace('item', '')) - 1]
-            except (ValueError, IndexError):
-                logging.debug("{0} cannot be mapped to an index in Group.items[]".format(repr(name)))
+                index = int(name[4:]) - 1  # "item<n>" -> <n>+1
+                return self[index]
+            except ValueError:
+                logging.debug("{} is not in the form 'item<n>'".format(name))
+            except IndexError:
+                logging.debug("item index {} is out of range".format(index))
+
         raise AttributeError
 
     def __len__(self):
         return len(self.items)
+
+    def __getitem__(self, index):
+        return self.items[index]
 
     def equality(self, other, equality_list=None):
         """Calculate equality based on equality of all group items.
