@@ -107,13 +107,6 @@ class _Indent(object):
 
     level = 0
 
-    def __init__(self):
-        raise NotImplementedError
-
-    @classmethod
-    def __str__(cls):
-        return '| ' * cls.level
-
     @classmethod
     def more(cls):
         """Increase the indent level."""
