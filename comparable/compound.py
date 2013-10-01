@@ -11,7 +11,7 @@ from comparable.base import _log_cmp
 from comparable import CompoundComparable
 
 
-class Group(CompoundComparable):
+class Group(CompoundComparable):  # pylint: disable=W0223
     """Comparable list of Comparable items."""
 
     equality_list = None  # created dynamically
@@ -28,7 +28,7 @@ class Group(CompoundComparable):
         """
         if name.startswith('item'):
             try:
-                index = int(name[4:]) - 1  # "item<n>" -> <n>+1
+                index = int(name[4:]) - 1  # "item<n>" -> <n>-1
                 return self[index]
             except ValueError:
                 logging.debug("{} is not in the form 'item<n>'".format(name))
@@ -43,15 +43,15 @@ class Group(CompoundComparable):
     def __getitem__(self, index):
         return self.items[index]
 
-    def equality(self, other, equality_list=None):
+    def equality(self, other):
         """Calculate equality based on equality of all group items.
         """
         if not len(self) == len(other):
             return False
-        return super().equality(other, equality_list=equality_list)
+        return super().equality(other)
 
     # TODO: refactor
-    def similarity(self, other, similarity_dict=None):
+    def similarity(self, other):
         """Calculate similarity based on similarity of the best matching
         permutation of items.
         """
@@ -78,7 +78,7 @@ class Group(CompoundComparable):
             logging.debug("permutation first: {}".format(repr(first.items)))
             logging.debug("permutation second: {}".format(repr(second.items)))
 
-            sim = max(sim, super(Group, first).similarity(second, similarity_dict=similarity_dict))
+            sim = max(sim, super(Group, first).similarity(second))
 
             logging.debug("highest similarity: {0}".format(sim))
 

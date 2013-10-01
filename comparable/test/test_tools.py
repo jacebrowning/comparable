@@ -21,14 +21,14 @@ class TestEqual(TestCase):  # pylint: disable=R0904
     def test_find_equal(self):
         """Verify equal items can be found."""
         base = Number(42)
-        iter = tools.find_equal(base, self.items)
-        self.assertListEqual([Number(42)], list(iter))
+        gen = tools.find_equal(base, self.items)
+        self.assertListEqual([Number(42)], list(gen))
 
     def test_find_equal_none(self):
         """Verify an empty generator when no items can be found."""
         base = Number(41)
-        iter = tools.find_equal(base, self.items)
-        self.assertListEqual([], list(iter))
+        gen = tools.find_equal(base, self.items)
+        self.assertListEqual([], list(gen))
 
     def test_match_equal(self):
         """Verify an equal item can be matched."""
@@ -51,14 +51,14 @@ class TestSimilar(TestCase):  # pylint: disable=R0904
     def test_find_similar(self):
         """Verify similar items can be found."""
         base = Number(42)
-        iter = tools.find_similar(base, self.items)
-        self.assertListEqual([Number(42), Number(42.001)], list(iter))
+        gen = tools.find_similar(base, self.items)
+        self.assertListEqual([Number(42), Number(42.001)], list(gen))
 
     def test_find_similar_none(self):
         """Verify an empty generator when no items can be found."""
         base = Number(41)
-        iter = tools.find_similar(base, self.items)
-        self.assertListEqual([], list(iter))
+        gen = tools.find_similar(base, self.items)
+        self.assertListEqual([], list(gen))
 
     def test_match_similar(self):
         """Verify an similar item can be matched."""
@@ -81,8 +81,8 @@ class TestDuplicates(TestCase):  # pylint: disable=R0904
     def test_duplicates(self):
         """Verify duplicate items can be found."""
         base = Number(42)
-        iter = tools.duplicates(base, self.items)
-        self.assertListEqual([Number(42.001)], list(iter))
+        gen = tools.duplicates(base, self.items)
+        self.assertListEqual([Number(42.001)], list(gen))
 
 
 class TestSort(TestCase):  # pylint: disable=R0904

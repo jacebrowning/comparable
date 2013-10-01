@@ -24,8 +24,8 @@ def match_equal(base, items):
     """
     for item in find_equal(base, items):
         return item
-    else:
-        return None
+
+    return None
 
 
 def find_similar(base, items):
@@ -48,8 +48,8 @@ def match_similar(base, items):
     finds = list(find_similar(base, items))
     if finds:
         return max(finds, key=base.similarity)  # TODO: make O(n)
-    else:
-        return None
+
+    return None
 
 
 def duplicates(base, items):

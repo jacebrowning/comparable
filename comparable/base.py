@@ -5,7 +5,7 @@ Abstract base class and similarity functions.
 """
 
 import logging
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod, abstractproperty  # pylint: disable=W0611
 
 
 class _Base(object):  # pylint: disable=R0903
@@ -105,21 +105,29 @@ class Similarity(_Base):
 class _Indent(object):
     """Indent formatter for logging calls."""
 
+    level = 0
+
     def __init__(self):
-        self.level = 0
+        raise NotImplementedError
 
-    def __str__(self):
-        return '| ' * self.level
+    @classmethod
+    def __str__(cls):
+        return '| ' * cls.level
 
-    def more(self):
+    @classmethod
+    def more(cls):
         """Increase the indent level."""
-        self.level += 1
+        cls.level += 1
 
-    def less(self):
+    @classmethod
+    def less(cls):
         """Decrease the indent level."""
-        self.level = max(self.level - 1, 0)
+        cls.level = max(cls.level - 1, 0)
 
-_indent = _Indent()
+    @classmethod
+    def indent(cls, fmt):
+        """Get a new format string with indentation."""
+        return '| ' * cls.level + fmt
 
 
 def _log_cmp(obj1, obj2, op, cname=None, aname=None, result=None, level=None):
@@ -147,14 +155,14 @@ def _log_cmp(obj1, obj2, op, cname=None, aname=None, result=None, level=None):
 
     if result is None:
         result = '...'
-        indent = str(_indent)
-        _indent.more()
+        fmt = _Indent.indent(fmt)
+        _Indent.more()
     else:
-        _indent.less()
-        indent = str(_indent)
+        _Indent.less()
+        fmt = _Indent.indent(fmt)
 
-    logging.log(level, indent + fmt.format(o1=repr(obj1), o2=repr(obj2),
-                                           c=cname, a=aname, op=op, r=result))
+    logging.log(level, fmt.format(o1=repr(obj1), o2=repr(obj2),
+                                  c=cname, a=aname, op=op, r=result))
 
 
 def equal(obj1, obj2):
@@ -226,19 +234,15 @@ class Comparable(_Base, metaclass=ABCMeta):
         return 1.0
 
     @abstractmethod
-    def equality(self, other, equality_list=None):
+    def equality(self, other):
         """Compare two objects for equality.
         @param self: first object to compare
         @param other: second object to compare
-        @param equality_list: list of attributes names to consider
         @return: boolean result of comparison
         """
-        if equality_list is None:
-            equality_list = self.equality_list
-
         # Compare specified attributes for equality
         cname = self.__class__.__name__
-        for aname in equality_list:
+        for aname in self.equality_list:
             try:
                 attr1 = getattr(self, aname)
                 attr2 = getattr(other, aname)
@@ -254,33 +258,29 @@ class Comparable(_Base, metaclass=ABCMeta):
         return True
 
     @abstractmethod
-    def similarity(self, other, similarity_dict=None):
+    def similarity(self, other):
         """Compare two objects for similarity.
         @param self: first object to compare
         @param other: second object to compare
-        @param similarity_dict: dict of attribute {name: weight} to consider
         @return: L{Similarity} result of comparison
         """
-        if similarity_dict is None:
-            similarity_dict = self.similarity_dict
-
         sim = Similarity(0.0, self.similarity_threshold)
         total = 0.0
 
-        # Calculate similarity ratio for specified attributes
+        # Calculate similarity ratio for each attribute
         cname = self.__class__.__name__
-        for aname, weight in similarity_dict.items():
+        for aname, weight in self.similarity_dict.items():
 
             attr1 = getattr(self, aname, None)
             attr2 = getattr(other, aname, None)
 
-            # Skip if both attributes are None
+            # Similarity is ignored if None on both objects
             if attr1 is None and attr2 is None:
                 _log_cmp(attr1, attr2, '%', cname=cname, aname=aname,
                          result="attributes are both None")
                 continue
 
-            # Count against the total if either at non-Comparable
+            # Similarity is 0 if either attribute is non-Comparable
             if not all((isinstance(attr1, Comparable),
                         isinstance(attr2, Comparable))):
                 _log_cmp(attr1, attr2, '%', cname=cname, aname=aname,
@@ -291,12 +291,16 @@ class Comparable(_Base, metaclass=ABCMeta):
             # Calculate similarity between the attributes
             _log_cmp(attr1, attr2, '%', cname=cname, aname=aname)
             attr_sim = (attr1 % attr2)
-            _log_cmp(attr1, attr2, '%', cname=cname, aname=aname, result=attr_sim)
+            _log_cmp(attr1, attr2, '%', cname=cname, aname=aname,
+                     result=attr_sim)
+
+            # Add the similarity to the total
             sim += attr_sim * weight
             total += weight
 
+        # Scale the similarity so the total is 1.0
         if total:
-            sim *= (1.0 / total)  # scale ratio so the total is 1.0
+            sim *= (1.0 / total)
 
         return sim
 
@@ -329,12 +333,12 @@ class CompoundComparable(Comparable):  # pylint: disable=W0223
     attributes should be considered.
     """
 
-    def equality(self, other, *args, **kwargs):
+    def equality(self, other):
         """A compound comparable's equality is based on attributes.
         """
-        return super().equality(other, *args, **kwargs)
+        return super().equality(other)
 
-    def similarity(self, other, *args, **kwargs):
+    def similarity(self, other):
         """A compound comparable's similarity is based on attributes.
         """
-        return super().similarity(other, *args, **kwargs)
+        return super().similarity(other)
