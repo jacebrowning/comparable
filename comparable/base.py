@@ -271,29 +271,29 @@ class Comparable(_Base, metaclass=ABCMeta):
         cname = self.__class__.__name__
         for aname, weight in similarity_dict.items():
 
-            # Handle for missing attributes
-            try:
-                attr1 = attr2 = '?'
-                attr1 = getattr(self, aname)
-                attr2 = getattr(other, aname)
-            except AttributeError:
-                _log_cmp(attr1, attr2, '%', cname=cname, aname=aname,
-                         result="an attribute is missing")
-                continue
-            else:
-                _log_cmp(attr1, attr2, '%', cname=cname, aname=aname)
+            attr1 = getattr(self, aname, None)
+            attr2 = getattr(other, aname, None)
 
-            # Handle empty attributes
-            if attr1 is None or attr2 is None:
+            # Skip if both attributes are None
+            if attr1 is None and attr2 is None:
                 _log_cmp(attr1, attr2, '%', cname=cname, aname=aname,
-                         result="an attribute is None")
+                         result="attributes are both None")
+                continue
+
+            # Count against the total if either at non-Comparable
+            if not all((isinstance(attr1, Comparable),
+                        isinstance(attr2, Comparable))):
+                _log_cmp(attr1, attr2, '%', cname=cname, aname=aname,
+                         result="attributes not Comparable")
+                total += weight
                 continue
 
             # Calculate similarity between the attributes
+            _log_cmp(attr1, attr2, '%', cname=cname, aname=aname)
             attr_sim = (attr1 % attr2)
-            _log_cmp(attr1, attr2, '%', cname=cname, aname=aname, result=sim)
-            total += weight
+            _log_cmp(attr1, attr2, '%', cname=cname, aname=aname, result=attr_sim)
             sim += attr_sim * weight
+            total += weight
 
         if total:
             sim *= (1.0 / total)  # scale ratio so the total is 1.0

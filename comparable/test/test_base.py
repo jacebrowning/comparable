@@ -318,22 +318,31 @@ class TestCompoundComparable(TestCase):  # pylint: disable=R0904
         equality = (self.obj1 == self.obj2)
         self.assertFalse(equality)
 
-    # TODO: is this the desired behavior for missing attributes?
     def test_similarity_missing_attribute(self):
-        """Verify a missing attribute in not included in similarity."""
+        """Verify a missing attribute hurts similarity."""
         self.obj1.item1.similarity.return_value = Similarity(1.0)
         self.obj1.item2.similarity.return_value = Similarity(1.0)
         del self.obj2.item2
         # Testing: %
         similarity = (self.obj1 % self.obj2)
-        self.assertTrue(similarity)
-        self.assertEqual(1.0, similarity)
+        self.assertFalse(similarity)
+        self.assertEqual(0.25, similarity)
 
-    # TODO: is this the desired behavior for empty attributes?
-    def test_similarity_empty_attribute(self):
-        """Verify an empty attribute in not included in similarity."""
+    def test_similarity_none_attribute(self):
+        """Verify an empty attribute hurts similarity."""
         self.obj1.item1.similarity.return_value = Similarity(1.0)
         self.obj1.item2.similarity.return_value = Similarity(1.0)
+        self.obj2.item2 = None
+        # Testing: %
+        similarity = (self.obj1 % self.obj2)
+        self.assertFalse(similarity)
+        self.assertEqual(0.25, similarity)
+
+    def test_similarity_none_attributes(self):
+        """Verify two empty attributes are not included in similarity."""
+        self.obj1.item1.similarity.return_value = Similarity(1.0)
+        self.obj1.item2.similarity.return_value = Similarity(1.0)
+        self.obj1.item2 = None
         self.obj2.item2 = None
         # Testing: %
         similarity = (self.obj1 % self.obj2)
