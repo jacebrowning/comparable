@@ -27,7 +27,7 @@ class TestCommand(setuptools.Command):  # pylint: disable=R0904
 
 setuptools.setup(
     name=__project__,
-    version='0.0.1-rc.1',
+    version='0.0.1-rc.2',
 
     description="Base class to enable objects to be compared for similarity.",
     url='http://pypi.python.org/pypi/Comparable',
