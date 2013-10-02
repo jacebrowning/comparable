@@ -228,6 +228,10 @@ class TestSimpleComparable(TestCase):  # pylint: disable=R0904
             self.assertFalse(similarity)
             self.obj1.similarity.assert_called_once_with(self.obj2)
 
+    def test_similarity_constructor(self):
+        """Verify a default Similarity is created correctly."""
+        self.assertEqual(Similarity(0.0, 1.0), self.obj1.Similarity())
+
 
 class TestCompoundComparable(TestCase):  # pylint: disable=R0904
     """Unit tests for the CompoundComparable class."""  # pylint: disable=C0103

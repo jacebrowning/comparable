@@ -49,7 +49,7 @@ class Number(_Simple):
             ratio = float(numerator) / denominator
         except ZeroDivisionError:
             ratio = 0.0 if numerator else 1.0
-        similarity = self.Similarity(ratio, self.similarity_threshold)
+        similarity = self.Similarity(ratio)
         return similarity
 
 
@@ -67,7 +67,7 @@ class Text(_Simple):
         """Get similarity as a ratio of the two texts.
         """
         ratio = SequenceMatcher(a=self.value, b=other.value).ratio()
-        similarity = self.Similarity(ratio, self.similarity_threshold)
+        similarity = self.Similarity(ratio)
         return similarity
 
 
@@ -80,7 +80,7 @@ class TextEnum(Text):
         """Get similarity as a discrete ratio (1.0 or 0.0).
         """
         ratio = 1.0 if (str(self).lower() == str(other).lower()) else 0.0
-        similarity = self.Similarity(ratio, self.similarity_threshold)
+        similarity = self.Similarity(ratio)
         return similarity
 
 
@@ -119,5 +119,5 @@ class TextTitle(Text):
         logging.debug("comparing {} and {}".format(repr(self.stripped),
                                                    repr(other.stripped)))
         ratio = SequenceMatcher(a=self.stripped, b=other.stripped).ratio()
-        similarity = self.Similarity(ratio, self.similarity_threshold)
+        similarity = self.Similarity(ratio)
         return similarity

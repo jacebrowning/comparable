@@ -55,15 +55,12 @@ class Group(CompoundComparable):  # pylint: disable=W0223
         """Calculate similarity based on similarity of the best matching
         permutation of items.
         """
-        sim = self.Similarity(0.0, self.similarity_threshold)
-
         if len(self.items) > len(other.items):
             first, second = self, other
         else:
             first, second = other, self
         items = list(first.items)
-        if not items:
-            return self.Similarity(1.0, self.similarity_threshold)
+        sim = self.Similarity(0.0 if items else 1.0)
 
         length = len(items)
         similarity_dict = {"item{}".format(i + 1): 1 for i in range(length)}

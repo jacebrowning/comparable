@@ -190,8 +190,6 @@ class Comparable(_Base, metaclass=ABCMeta):
     threshold.
     """
 
-    Similarity = Similarity  # constructor to create new similarities
-
     def __eq__(self, other):
         """Maps the '==' operator to be a shortcut for "equality".
         """
@@ -296,6 +294,14 @@ class Comparable(_Base, metaclass=ABCMeta):
             sim *= (1.0 / total)
 
         return sim
+
+    def Similarity(self, value=None, threshold=None):  # pylint: disable=C0103
+        """Constructor for new default Similarities."""
+        if value is None:
+            value = 0.0
+        if threshold is None:
+            threshold = self.similarity_threshold
+        return Similarity(value, threshold=threshold)
 
 
 class SimpleComparable(Comparable):  # pylint: disable=W0223
