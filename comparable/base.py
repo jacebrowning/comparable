@@ -123,56 +123,21 @@ class _Indent(object):
         return '| ' * cls.level + fmt
 
 
-def _log_cmp(obj1, obj2, op, cname=None, aname=None, result=None, level=None):
-    """Log the objects being compared and the result.
-
-    When no result object is specified, subsequence calls will have an
-    increased indentation level. The indentation level is decreased
-    once a result object is provided.
-
-    @param obj1: first object
-    @param obj2: second object
-    @param op: operation being performed ('=' or '%')
-    @param cname: name of class (when attributes are being compared)
-    @param aname: name of attribute (when attributes are being compared)
-    @param result: outcome of comparison
-    @param level: logging level
-    """
-    fmt = "{o1} {op} {o2} : {r}"
-    if cname or aname:
-        assert cname and aname  # both must be specified
-        fmt = "{c}.{a}: " + fmt
-        level = level or logging.DEBUG
-    else:
-        level = level or logging.INFO
-
-    if result is None:
-        result = '...'
-        fmt = _Indent.indent(fmt)
-        _Indent.more()
-    else:
-        _Indent.less()
-        fmt = _Indent.indent(fmt)
-
-    logging.log(level, fmt.format(o1=repr(obj1), o2=repr(obj2),
-                                  c=cname, a=aname, op=op, r=result))
-
-
 def equal(obj1, obj2):
     """Calculate equality between two (Comparable) objects.
     """
-    _log_cmp(obj1, obj2, '=')
+    Comparable.log(obj1, obj2, '=')
     equality = obj1.equality(obj2)
-    _log_cmp(obj1, obj2, '=', result=equality)
+    Comparable.log(obj1, obj2, '=', result=equality)
     return equality
 
 
 def similar(obj1, obj2):
     """Calculate similarity between two (Comparable) objects.
     """
-    _log_cmp(obj1, obj2, '%')
+    Comparable.log(obj1, obj2, '%')
     similarity = obj1.similarity(obj2)
-    _log_cmp(obj1, obj2, '%', result=similarity)
+    Comparable.log(obj1, obj2, '%', result=similarity)
     return similarity
 
 
@@ -240,9 +205,9 @@ class Comparable(_Base, metaclass=ABCMeta):
             except AttributeError as error:
                 logging.debug("{}.{}: {}".format(cname, aname, error))
                 return False
-            _log_cmp(attr1, attr2, '=', cname=cname, aname=aname)
+            self.log(attr1, attr2, '=', cname=cname, aname=aname)
             eq = (attr1 == attr2)
-            _log_cmp(attr1, attr2, '=', cname=cname, aname=aname, result=eq)
+            self.log(attr1, attr2, '=', cname=cname, aname=aname, result=eq)
             if not eq:
                 return False
 
@@ -267,22 +232,22 @@ class Comparable(_Base, metaclass=ABCMeta):
 
             # Similarity is ignored if None on both objects
             if attr1 is None and attr2 is None:
-                _log_cmp(attr1, attr2, '%', cname=cname, aname=aname,
+                self.log(attr1, attr2, '%', cname=cname, aname=aname,
                          result="attributes are both None")
                 continue
 
             # Similarity is 0 if either attribute is non-Comparable
             if not all((isinstance(attr1, Comparable),
                         isinstance(attr2, Comparable))):
-                _log_cmp(attr1, attr2, '%', cname=cname, aname=aname,
+                self.log(attr1, attr2, '%', cname=cname, aname=aname,
                          result="attributes not Comparable")
                 total += weight
                 continue
 
             # Calculate similarity between the attributes
-            _log_cmp(attr1, attr2, '%', cname=cname, aname=aname)
+            self.log(attr1, attr2, '%', cname=cname, aname=aname)
             attr_sim = (attr1 % attr2)
-            _log_cmp(attr1, attr2, '%', cname=cname, aname=aname,
+            self.log(attr1, attr2, '%', cname=cname, aname=aname,
                      result=attr_sim)
 
             # Add the similarity to the total
@@ -302,6 +267,40 @@ class Comparable(_Base, metaclass=ABCMeta):
         if threshold is None:
             threshold = self.similarity_threshold
         return Similarity(value, threshold=threshold)
+
+    @staticmethod
+    def log(obj1, obj2, op, cname=None, aname=None, result=None):
+        """Log the objects being compared and the result.
+
+        When no result object is specified, subsequence calls will have an
+        increased indentation level. The indentation level is decreased
+        once a result object is provided.
+
+        @param obj1: first object
+        @param obj2: second object
+        @param op: operation being performed ('=' or '%')
+        @param cname: name of class (when attributes are being compared)
+        @param aname: name of attribute (when attributes are being compared)
+        @param result: outcome of comparison
+        """
+        fmt = "{o1} {op} {o2} : {r}"
+        if cname or aname:
+            assert cname and aname  # both must be specified
+            fmt = "{c}.{a}: " + fmt
+            level = logging.DEBUG
+        else:
+            level = logging.INFO
+
+        if result is None:
+            result = '...'
+            fmt = _Indent.indent(fmt)
+            _Indent.more()
+        else:
+            _Indent.less()
+            fmt = _Indent.indent(fmt)
+
+        logging.log(level, fmt.format(o1=repr(obj1), o2=repr(obj2),
+                                      c=cname, a=aname, op=op, r=result))
 
 
 class SimpleComparable(Comparable):  # pylint: disable=W0223

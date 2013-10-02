@@ -7,7 +7,6 @@ Class definitions for compound comparable types.
 import logging
 from itertools import permutations
 
-from comparable.base import _log_cmp
 from comparable import CompoundComparable
 
 
@@ -65,13 +64,13 @@ class Group(CompoundComparable):  # pylint: disable=W0223
 
         # Calculate the similarity for each permutation of items
         cname = self.__class__.__name__
-        _log_cmp(first, second, '%', cname=cname, aname='items')
+        self.log(first, second, '%', cname=cname, aname='items')
         for permutation in permutations(items, length):
             first.items = permutation
             logging.debug("permutation: {}".format(first.items))
             sim = max(sim, super(Group, first).similarity(second))
             logging.debug("highest similarity: {}".format(sim))
-        _log_cmp(first, second, '%', cname=cname, aname='items', result=sim)
+        self.log(first, second, '%', cname=cname, aname='items', result=sim)
         first.items = items  # restore original items list
 
         return sim
