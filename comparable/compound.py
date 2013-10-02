@@ -50,38 +50,28 @@ class Group(CompoundComparable):  # pylint: disable=W0223
             return False
         return super().equality(other)
 
-    # TODO: refactor
     def similarity(self, other):
         """Calculate similarity based on similarity of the best matching
         permutation of items.
         """
+        # Select the longer list as the basis for comparison
         if len(self.items) > len(other.items):
             first, second = self, other
         else:
             first, second = other, self
-        items = list(first.items)
-        sim = self.Similarity(0.0 if items else 1.0)
-
+        items = list(first.items)  # backup items list
         length = len(items)
-        similarity_dict = {"item{}".format(i + 1): 1 for i in range(length)}
-        logging.debug("similarity_dict: {}".format(similarity_dict))
+        sim = self.Similarity(0.0 if length else 1.0)
 
+        # Calculate the similarity for each permutation of items
         cname = self.__class__.__name__
         _log_cmp(first, second, '%', cname=cname, aname='items')
-
         for permutation in permutations(items, length):
             first.items = permutation
-
-            logging.debug("permutation first: {}".format(repr(first.items)))
-            logging.debug("permutation second: {}".format(repr(second.items)))
-
+            logging.debug("permutation: {}".format(first.items))
             sim = max(sim, super(Group, first).similarity(second))
-
-            logging.debug("highest similarity: {0}".format(sim))
-
+            logging.debug("highest similarity: {}".format(sim))
         _log_cmp(first, second, '%', cname=cname, aname='items', result=sim)
-
-        logging.debug("similarity: {}".format(sim))
-        first.items = items
+        first.items = items  # restore original items list
 
         return sim
