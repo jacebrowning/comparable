@@ -14,7 +14,7 @@ Requirements
 ------------
 
 * Python 3
-* setuptools and/or pip
+* ``setuptools`` and/or ``pip``
 
 
 Installation
@@ -40,8 +40,9 @@ After installation, abstract base classes can be imported from the package::
     comparable.__version__
     >>> from comparable import SimpleComparable, CompoundComparable
 
-Comparable classes use ``==`` as the operation for "equality" and ``%``
-as the operation for "similarity".
+Comparable classes use '``==``' as the operation for "equality" and
+'``%``' as the operation for "similarity". They may also override a
+``threshold`` property to set the "similarity" ratio.
 
 
 Simple Comparables
@@ -56,9 +57,9 @@ Compound Comparables
 --------------------
 
 Compound comparable types contain multiple simple comparable types.
-They must override the ``equality_list`` and ``similarity_dict``
-properties to define which attributes should be used for comparison.
-See ``comparable.compund`` for examples.
+They must override the ``attributes`` property to define which
+attributes should be used for comparison. See ``comparable.compund``
+for examples.
 
 
 

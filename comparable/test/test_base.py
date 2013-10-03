@@ -6,7 +6,9 @@ Tests for the comparable.base module.
 
 import logging
 import unittest
+from collections import OrderedDict
 from unittest.mock import patch, Mock, MagicMock
+
 
 from comparable.base import _Base, Similarity, equal, similar
 from comparable.base import SimpleComparable, CompoundComparable
@@ -28,7 +30,8 @@ class TestBase(TestCase):  # pylint: disable=R0904
             self.kwarg2 = kwarg2
 
         def __repr__(self):
-            return self._repr(self.arg1, self.arg2, kwarg1=self.kwarg1, kwarg2=self.kwarg2)
+            return self._repr(self.arg1, self.arg2,
+                              kwarg1=self.kwarg1, kwarg2=self.kwarg2)
 
         def __eq__(self, other):
             return self.__dict__ == other.__dict__
@@ -255,9 +258,8 @@ class TestCompoundComparable(TestCase):  # pylint: disable=R0904
         def __repr__(self):
             return "<Compound {0}>".format(id(self))
 
-        equality_list = ['item1', 'item2']
-        similarity_dict = {'item1': 0.25, 'item2': 0.75}
-        similarity_threshold = 0.50
+        attributes = OrderedDict([('item1', 0.25), ('item2', 0.75)])
+        threshold = 0.50
 
     def setUp(self):
         self.obj1 = self.Compound()
@@ -373,6 +375,6 @@ class TestModule(TestCase):  # pylint: disable=R0904
 
 
 if __name__ == '__main__':
-    logging.basicConfig(format=settings.DEFAULT_LOGGING_FORMAT,
-                        level=settings.VERBOSE_LOGGING_LEVEL)
-    unittest.main()
+    logging.basicConfig(format=settings.DEFAULT_LOGGING_LEVEL,
+                        level=settings.DEFAULT_LOGGING_LEVEL)
+    unittest.main(verbosity=0)

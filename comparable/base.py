@@ -126,9 +126,9 @@ class _Indent(object):
 def equal(obj1, obj2):
     """Calculate equality between two (Comparable) objects.
     """
-    Comparable.log(obj1, obj2, '=')
+    Comparable.log(obj1, obj2, '==')
     equality = obj1.equality(obj2)
-    Comparable.log(obj1, obj2, '=', result=equality)
+    Comparable.log(obj1, obj2, '==', result=equality)
     return equality
 
 
@@ -149,10 +149,11 @@ class Comparable(_Base, metaclass=ABCMeta):
     respectively.
 
     Subclasses comparable by attributes must override the
-    'equality_list' and 'similarity_dict' properties to define which
-    (Comparable) attributes should be considered. They may also
-    override the 'similarity_threshold' property to change the default
-    threshold.
+    'attributes' property to define which (Comparable) attributes
+    should be considered.
+
+    Both types of subclasses may also override the 'threshold'
+    property to change the default similarity threshold.
     """
 
     def __eq__(self, other):
@@ -169,23 +170,14 @@ class Comparable(_Base, metaclass=ABCMeta):
         return similar(self, other)
 
     @abstractproperty
-    def equality_list(self):  # pragma: no cover, abstract
-        """Get the list of attributes names to consider in
-        "equality" calculations.
-        """
-        return []
-
-    @abstractproperty
-    def similarity_dict(self):  # pragma: no cover, abstract
-        """Get a dictionary of attribute {name: weight} to consider in
-        "similarity" calculations.
+    def attributes(self):  # pragma: no cover, abstract
+        """Get an attribute {name: weight} dictionary for comparisons.
         """
         return {}
 
     @property
-    def similarity_threshold(self):  # pragma: no cover, abstract
-        """Get the similarity threshold value for two objects to be
-        considered "similar".
+    def threshold(self):  # pragma: no cover, abstract
+        """Get the ratio for two objects to be considered "similar".
         """
         return 1.0
 
@@ -198,16 +190,16 @@ class Comparable(_Base, metaclass=ABCMeta):
         """
         # Compare specified attributes for equality
         cname = self.__class__.__name__
-        for aname in self.equality_list:
+        for aname in self.attributes:
             try:
                 attr1 = getattr(self, aname)
                 attr2 = getattr(other, aname)
             except AttributeError as error:
                 logging.debug("{}.{}: {}".format(cname, aname, error))
                 return False
-            self.log(attr1, attr2, '=', cname=cname, aname=aname)
+            self.log(attr1, attr2, '==', cname=cname, aname=aname)
             eq = (attr1 == attr2)
-            self.log(attr1, attr2, '=', cname=cname, aname=aname, result=eq)
+            self.log(attr1, attr2, '==', cname=cname, aname=aname, result=eq)
             if not eq:
                 return False
 
@@ -220,15 +212,16 @@ class Comparable(_Base, metaclass=ABCMeta):
         @param other: second object to compare
         @return: L{Similarity} result of comparison
         """
-        sim = Similarity(0.0, self.similarity_threshold)
+        sim = self.Similarity()
         total = 0.0
 
         # Calculate similarity ratio for each attribute
         cname = self.__class__.__name__
-        for aname, weight in self.similarity_dict.items():
+        for aname, weight in self.attributes.items():
 
             attr1 = getattr(self, aname, None)
             attr2 = getattr(other, aname, None)
+            self.log(attr1, attr2, '%', cname=cname, aname=aname)
 
             # Similarity is ignored if None on both objects
             if attr1 is None and attr2 is None:
@@ -245,7 +238,6 @@ class Comparable(_Base, metaclass=ABCMeta):
                 continue
 
             # Calculate similarity between the attributes
-            self.log(attr1, attr2, '%', cname=cname, aname=aname)
             attr_sim = (attr1 % attr2)
             self.log(attr1, attr2, '%', cname=cname, aname=aname,
                      result=attr_sim)
@@ -265,7 +257,7 @@ class Comparable(_Base, metaclass=ABCMeta):
         if value is None:
             value = 0.0
         if threshold is None:
-            threshold = self.similarity_threshold
+            threshold = self.threshold
         return Similarity(value, threshold=threshold)
 
     @staticmethod
@@ -278,7 +270,7 @@ class Comparable(_Base, metaclass=ABCMeta):
 
         @param obj1: first object
         @param obj2: second object
-        @param op: operation being performed ('=' or '%')
+        @param op: operation being performed ('==' or '%')
         @param cname: name of class (when attributes are being compared)
         @param aname: name of attribute (when attributes are being compared)
         @param result: outcome of comparison
@@ -287,9 +279,6 @@ class Comparable(_Base, metaclass=ABCMeta):
         if cname or aname:
             assert cname and aname  # both must be specified
             fmt = "{c}.{a}: " + fmt
-            level = logging.DEBUG
-        else:
-            level = logging.INFO
 
         if result is None:
             result = '...'
@@ -299,26 +288,22 @@ class Comparable(_Base, metaclass=ABCMeta):
             _Indent.less()
             fmt = _Indent.indent(fmt)
 
-        logging.log(level, fmt.format(o1=repr(obj1), o2=repr(obj2),
-                                      c=cname, a=aname, op=op, r=result))
+        logging.info(fmt.format(o1=repr(obj1), o2=repr(obj2),
+                                c=cname, a=aname, op=op, r=result))
 
 
 class SimpleComparable(Comparable):  # pylint: disable=W0223
     """Abstract Base Class for objects that are directly comparable.
 
-    Subclasses must override the 'equality' and 'similarity' methods
-    to return a 'bool' and 'Similarity' object, respectively.
+    Subclasses directly comparable must override the 'equality' and
+    'similarity' methods to return a bool and 'Similarity' object,
+    respectively. They may also override the 'threshold' property
+    to change the default similarity threshold.
     """
 
     @property
-    def equality_list(self):  # pragma: no cover, abstract
-        """A simple comparable does not use an equality list.
-        """
-        raise AttributeError()
-
-    @property
-    def similarity_dict(self):  # pragma: no cover, abstract
-        """A simple comparable does not use a similarity dict.
+    def attributes(self):  # pragma: no cover, abstract
+        """A simple comparable does not use the attributes property.
         """
         raise AttributeError()
 
@@ -326,9 +311,10 @@ class SimpleComparable(Comparable):  # pylint: disable=W0223
 class CompoundComparable(Comparable):  # pylint: disable=W0223
     """Abstract Base Class for objects that are comparable by attributes.
 
-    Subclasses must override the 'equality_list', 'similarity_dict', and
-    'similarity_threshold' properties to define which (Comparable)
-    attributes should be considered.
+    Subclasses comparable by attributes must override the
+    'attributes' property to define which (Comparable) attributes
+    should be considered. They may also override the 'threshold'
+    property to change the default similarity threshold.
     """
 
     def equality(self, other):

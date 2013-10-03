@@ -132,11 +132,11 @@ check: depends
 
 .PHONY: test
 test: develop depends
-	$(NOSE)
+	$(NOSE) --logging-format="%(message)s"
 
 .PHONY: tests
 tests: develop depends
-	TEST_INTEGRATION=1 $(NOSE) --verbose  --stop
+	TEST_INTEGRATION=1 $(NOSE) --logging-format="%(message)s" --verbose --stop
 
 # Cleanup ####################################################################
 

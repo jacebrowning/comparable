@@ -60,6 +60,6 @@ class TestGroup(TestCase):  # pylint: disable=R0904
 
 
 if __name__ == '__main__':
-    logging.basicConfig(format=settings.VERBOSE_LOGGING_FORMAT,
-                        level=settings.VERBOSE_LOGGING_LEVEL)
-    unittest.main()
+    logging.basicConfig(format=settings.DEFAULT_LOGGING_FORMAT,
+                        level=settings.DEFAULT_LOGGING_LEVEL)
+    unittest.main(verbosity=0)

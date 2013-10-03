@@ -13,14 +13,15 @@ from comparable import CompoundComparable
 class Group(CompoundComparable):  # pylint: disable=W0223
     """Comparable list of Comparable items."""
 
-    equality_list = None  # created dynamically
-    similarity_dict = None  # created dynamically
+    attributes = None  # created dynamically
 
     def __init__(self, items):
         self.items = items
-        names = ["item{0}".format(n + 1) for n in range(len(items))]
-        self.equality_list = names
-        self.similarity_dict = {name: 1 for name in names}
+        names = ("item{0}".format(n + 1) for n in range(len(items)))
+        self.attributes = {name: 1 for name in names}
+
+    def __repr__(self):
+        return self._repr(self.items)
 
     def __getattr__(self, name):
         """Allows self.items[<i>] to be accessed as self.item<i+1>.
@@ -64,13 +65,18 @@ class Group(CompoundComparable):  # pylint: disable=W0223
 
         # Calculate the similarity for each permutation of items
         cname = self.__class__.__name__
-        self.log(first, second, '%', cname=cname, aname='items')
-        for permutation in permutations(items, length):
-            first.items = permutation
-            logging.debug("permutation: {}".format(first.items))
-            sim = max(sim, super(Group, first).similarity(second))
+
+        for num, perm in enumerate(permutations(items, length), start=1):
+            first.items = perm
+            aname = 'items-p{}'.format(num)
+            self.log(first, second, '%', cname=cname, aname=aname)
+            permutation_sim = super(Group, first).similarity(second)
+            self.log(first, second, '%', cname=cname, aname=aname,
+                     result=permutation_sim)
+
+            sim = max(sim, permutation_sim)
             logging.debug("highest similarity: {}".format(sim))
-        self.log(first, second, '%', cname=cname, aname='items', result=sim)
+
         first.items = items  # restore original items list
 
         return sim

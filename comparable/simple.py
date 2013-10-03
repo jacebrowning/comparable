@@ -29,7 +29,7 @@ class _Simple(SimpleComparable):  # pylint: disable=W0223
 class Number(_Simple):
     """Comparable positive number."""
 
-    similarity_threshold = 0.999  # 99.9% similar
+    threshold = 0.999  # 99.9% similar
 
     def __init__(self, value):
         super().__init__(value)
@@ -56,7 +56,7 @@ class Number(_Simple):
 class Text(_Simple):
     """Comparable generic text."""
 
-    similarity_threshold = 0.83  # "Hello, world!" ~ "hello world"
+    threshold = 0.83  # "Hello, world!" ~ "hello world"
 
     def equality(self, other):
         """Get equality using string comparison.
@@ -74,7 +74,7 @@ class Text(_Simple):
 class TextEnum(Text):
     """Comparable case-insensitive textual enumeration."""
 
-    similarity_threshold = 1.0  # enumerations must match
+    threshold = 1.0  # enumerations must match
 
     def similarity(self, other):
         """Get similarity as a discrete ratio (1.0 or 0.0).
@@ -87,7 +87,7 @@ class TextEnum(Text):
 class TextTitle(Text):
     """Comparable case-insensitive textual titles."""
 
-    similarity_threshold = 0.93  # "The Cat and the Hat" ~ "cat an' the hat"
+    threshold = 0.93  # "The Cat and the Hat" ~ "cat an' the hat"
 
     ARTICLES = 'a', 'an', 'the'  # stripped from the front
     JOINERS = '&', '+'  # replaced with 'and'
@@ -116,8 +116,8 @@ class TextTitle(Text):
     def similarity(self, other):
         """Get similarity as a ratio of the stripped text.
         """
-        logging.debug("comparing {} and {}".format(repr(self.stripped),
-                                                   repr(other.stripped)))
+        logging.debug("comparing {} and {}...".format(repr(self.stripped),
+                                                      repr(other.stripped)))
         ratio = SequenceMatcher(a=self.stripped, b=other.stripped).ratio()
         similarity = self.Similarity(ratio)
         return similarity
