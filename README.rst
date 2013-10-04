@@ -5,6 +5,9 @@ Comparable is a library providing abstract base classes that enable
 subclasses to be compared for "equality" and "similarity" based on
 their attributes.
 
+.. NOTE::
+   0.0.x releases are experimental; the APIs are still being designed.
+
 
 
 Getting Started
