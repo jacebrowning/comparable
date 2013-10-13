@@ -45,7 +45,7 @@ After installation, abstract base classes can be imported from the package::
 
 Comparable classes use '``==``' as the operation for "equality" and
 '``%``' as the operation for "similarity". They may also override a
-``threshold`` property to set the "similarity" ratio.
+``threshold`` attribute to set the "similarity" ratio.
 
 
 Simple Comparables
