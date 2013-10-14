@@ -11,7 +11,7 @@ from comparable import __project__
 
 setuptools.setup(
     name=__project__,
-    version='0.0.3-rc.1',
+    version='0.0.3',
 
     description="Base class to enable objects to be compared for similarity.",
     url='http://pypi.python.org/pypi/Comparable',
