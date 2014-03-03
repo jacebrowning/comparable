@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Settings for the comparable.test package.
-"""
+"""Settings for the comparable.test package."""
 
 import logging
 

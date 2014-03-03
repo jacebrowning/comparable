@@ -1,21 +1,22 @@
 #!/usr/bin/env python
 
-"""
-Abstract base class and similarity functions.
-"""
+"""Abstract base class and similarity functions."""
 
 import logging
 from abc import ABCMeta, abstractmethod, abstractproperty  # pylint: disable=W0611
 
 
 class _Base(object):  # pylint: disable=R0903
+
     """Shared base class."""
 
     def _repr(self, *args, **kwargs):
         """Return a __repr__ string from the arguments provided to __init__.
+
         @param args: list of arguments to __init__
         @param kwargs: dictionary of keyword arguments to __init__
         @return: __repr__ string
+
         """
         # Remove unnecessary empty keywords arguments
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
@@ -31,6 +32,7 @@ class _Base(object):  # pylint: disable=R0903
 
 
 class Similarity(_Base):  # pylint: disable=R0903
+
     """Represents the similarity between two objects."""
 
     def __init__(self, value, threshold=1.0):
@@ -56,13 +58,11 @@ class Similarity(_Base):  # pylint: disable=R0903
         return float(self) > float(other)
 
     def __bool__(self):
-        """In boolean scenarios, similarity is True if the threshold is met.
-        """
+        """In boolean scenarios, similarity is True if the threshold is met."""
         return self.value >= self.threshold
 
     def __float__(self):
-        """In non-boolean scenarios, similarity is treated like a float.
-        """
+        """In non-boolean scenarios, similarity is treated like a float."""
         return self.value
 
     def __add__(self, other):
@@ -103,6 +103,7 @@ class Similarity(_Base):  # pylint: disable=R0903
 
 
 class _Indent(object):
+
     """Indent formatter for logging calls."""
 
     level = 0
@@ -124,8 +125,7 @@ class _Indent(object):
 
 
 def equal(obj1, obj2):
-    """Calculate equality between two (Comparable) objects.
-    """
+    """Calculate equality between two (Comparable) objects."""
     Comparable.log(obj1, obj2, '==')
     equality = obj1.equality(obj2)
     Comparable.log(obj1, obj2, '==', result=equality)
@@ -133,8 +133,7 @@ def equal(obj1, obj2):
 
 
 def similar(obj1, obj2):
-    """Calculate similarity between two (Comparable) objects.
-    """
+    """Calculate similarity between two (Comparable) objects."""
     Comparable.log(obj1, obj2, '%')
     similarity = obj1.similarity(obj2)
     Comparable.log(obj1, obj2, '%', result=similarity)
@@ -142,6 +141,7 @@ def similar(obj1, obj2):
 
 
 class Comparable(_Base, metaclass=ABCMeta):
+
     """Abstract Base Class for objects that are comparable.
 
     Subclasses directly comparable must override the 'equality' and
@@ -154,25 +154,23 @@ class Comparable(_Base, metaclass=ABCMeta):
 
     Both types of subclasses may also override the 'threshold'
     attribute to change the default similarity threshold.
+
     """
 
     def __eq__(self, other):
-        """Maps the '==' operator to be a shortcut for "equality".
-        """
+        """Map the '==' operator to be a shortcut for "equality"."""
         return equal(self, other)
 
     def __ne__(self, other):
         return not self == other
 
     def __mod__(self, other):
-        """Maps the '%' operator to be a shortcut for "similarity".
-        """
+        """Map the '%' operator to be a shortcut for "similarity"."""
         return similar(self, other)
 
     @abstractproperty
     def attributes(self):  # pragma: no cover, abstract
-        """Get an attribute {name: weight} dictionary for comparisons.
-        """
+        """Get an attribute {name: weight} dictionary for comparisons."""
         return {}
 
     threshold = 1.0  # ratio for two objects to be considered "similar"
@@ -180,9 +178,12 @@ class Comparable(_Base, metaclass=ABCMeta):
     @abstractmethod
     def equality(self, other):
         """Compare two objects for equality.
+
         @param self: first object to compare
         @param other: second object to compare
+
         @return: boolean result of comparison
+
         """
         # Compare specified attributes for equality
         cname = self.__class__.__name__
@@ -204,9 +205,12 @@ class Comparable(_Base, metaclass=ABCMeta):
     @abstractmethod
     def similarity(self, other):
         """Compare two objects for similarity.
+
         @param self: first object to compare
         @param other: second object to compare
+
         @return: L{Similarity} result of comparison
+
         """
         sim = self.Similarity()
         total = 0.0
@@ -270,6 +274,7 @@ class Comparable(_Base, metaclass=ABCMeta):
         @param cname: name of class (when attributes are being compared)
         @param aname: name of attribute (when attributes are being compared)
         @param result: outcome of comparison
+
         """
         fmt = "{o1} {sym} {o2} : {r}"
         if cname or aname:
@@ -289,36 +294,37 @@ class Comparable(_Base, metaclass=ABCMeta):
 
 
 class SimpleComparable(Comparable):  # pylint: disable=W0223
+
     """Abstract Base Class for objects that are directly comparable.
 
     Subclasses directly comparable must override the 'equality' and
     'similarity' methods to return a bool and 'Similarity' object,
     respectively. They may also override the 'threshold' attribute
     to change the default similarity threshold.
+
     """
 
     @property
     def attributes(self):  # pragma: no cover, abstract
-        """A simple comparable does not use the attributes property.
-        """
+        """A simple comparable does not use the attributes property."""
         raise AttributeError()
 
 
 class CompoundComparable(Comparable):  # pylint: disable=W0223
+
     """Abstract Base Class for objects that are comparable by attributes.
 
     Subclasses comparable by attributes must override the
     'attributes' property to define which (Comparable) attributes
     should be considered. They may also override the 'threshold'
     attribute to change the default similarity threshold.
+
     """
 
     def equality(self, other):
-        """A compound comparable's equality is based on attributes.
-        """
+        """A compound comparable's equality is based on attributes."""
         return super().equality(other)
 
     def similarity(self, other):
-        """A compound comparable's similarity is based on attributes.
-        """
+        """A compound comparable's similarity is based on attributes."""
         return super().similarity(other)

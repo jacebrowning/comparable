@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Tests for comparable package.
-"""
+"""Tests for the comparable package."""
 
 import os
 import logging
@@ -13,12 +11,12 @@ REASON = "'{0}' variable not set".format(ENV)
 
 
 class TestCase(unittest.TestCase):  # pylint: disable=R0904
+
     """Common test case class with new assertion methods."""  # pylint: disable=C0103
 
     def assertComparison(self, obj1, obj2,
                          expected_equality, expected_similarity):  # pylint:disable=R0913
-        """Fail if objects do not match the expected equality and similarity.
-        """
+        """Fail if objects do not match the expected equality/similarity."""
         logging.info("calculating equality...")
         equality = obj1 == obj2
         logging.info("calculating similarity...")
@@ -30,6 +28,7 @@ class TestCase(unittest.TestCase):  # pylint: disable=R0904
 
 @unittest.skipUnless(os.getenv(ENV), REASON)  # pylint: disable=R0904
 class TestIntegration(TestCase):
+
     """Integration tests for the comparable package."""
 
     def test_imports(self):

@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Tests for the comparable.compound module.
-"""
+"""Tests for the comparable.compound module."""
 
 import logging
 import unittest
@@ -14,6 +12,7 @@ from comparable.test import TestCase, settings
 
 
 class TestGroup(TestCase):  # pylint: disable=R0904
+
     """Integration tests for the Items class."""
 
     def test_attributes(self):

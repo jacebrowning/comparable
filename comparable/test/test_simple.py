@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Tests for the comparable.simple module.
-"""
+"""Tests for the comparable.simple module."""
 
 import logging
 import unittest
@@ -13,6 +11,7 @@ from comparable.test import TestCase, settings
 
 
 class TestNumber(TestCase):  # pylint: disable=R0904
+
     """Integration tests for the Number class."""
 
     def test_identical(self):
@@ -56,6 +55,7 @@ class TestNumber(TestCase):  # pylint: disable=R0904
 
 
 class TestText(TestCase):  # pylint: disable=R0904
+
     """Integration tests for the Text class."""
 
     def test_identical(self):
@@ -97,6 +97,7 @@ class TestText(TestCase):  # pylint: disable=R0904
 
 
 class TestEnum(TestCase):  # pylint: disable=R0904
+
     """Integration tests for the TextEnum class."""
 
     def test_identical(self):
@@ -126,6 +127,7 @@ class TestEnum(TestCase):  # pylint: disable=R0904
 
 
 class TestTextTitle(TestCase):  # pylint: disable=R0904
+
     """Integration tests for the TextTitle class."""
 
     def test_identical(self):

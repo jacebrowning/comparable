@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Class definitions for compound comparable types.
-"""
+"""Class definitions for compound comparable types."""
 
 import logging
 from itertools import permutations
@@ -11,6 +9,7 @@ from comparable import CompoundComparable
 
 
 class Group(CompoundComparable):  # pylint: disable=W0223
+
     """Comparable list of Comparable items."""
 
     attributes = None  # created dynamically
@@ -24,8 +23,7 @@ class Group(CompoundComparable):  # pylint: disable=W0223
         return self._repr(self.items)
 
     def __getattr__(self, name):
-        """Allows self.items[<i>] to be accessed as self.item<i+1>.
-        """
+        """Allow self.items[<i>] to be accessed as self.item<i+1>."""
         if name.startswith('item'):
             try:
                 index = int(name[4:]) - 1  # "item<n>" -> <n>-1
@@ -44,16 +42,13 @@ class Group(CompoundComparable):  # pylint: disable=W0223
         return self.items[index]
 
     def equality(self, other):
-        """Calculate equality based on equality of all group items.
-        """
+        """Calculate equality based on equality of all group items."""
         if not len(self) == len(other):
             return False
         return super().equality(other)
 
     def similarity(self, other):
-        """Calculate similarity based on similarity of the best matching
-        permutation of items.
-        """
+        """Calculate similarity based on best matching permutation of items."""
         # Select the longer list as the basis for comparison
         if len(self.items) > len(other.items):
             first, second = self, other

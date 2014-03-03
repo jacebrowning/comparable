@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Tests for the comparable.tools module.
-"""
+"""Tests for the comparable.tools module."""
 
 import logging
 import unittest
@@ -14,6 +12,7 @@ from comparable.test import TestCase, settings
 
 
 class TestEqual(TestCase):  # pylint: disable=R0904
+
     """Integration tests for equality functions."""
 
     items = [Number(42), Number(42.001), Number(43)]
@@ -44,6 +43,7 @@ class TestEqual(TestCase):  # pylint: disable=R0904
 
 
 class TestSimilar(TestCase):  # pylint: disable=R0904
+
     """Integration tests for similarity functions."""
 
     items = [Number(42), Number(42.001), Number(43)]
@@ -74,6 +74,7 @@ class TestSimilar(TestCase):  # pylint: disable=R0904
 
 
 class TestDuplicates(TestCase):  # pylint: disable=R0904
+
     """Integration tests for duplicate functions."""
 
     items = [Number(42), Number(42.001), Number(43)]
@@ -86,6 +87,7 @@ class TestDuplicates(TestCase):  # pylint: disable=R0904
 
 
 class TestSort(TestCase):  # pylint: disable=R0904
+
     """Integration tests for sort functions."""
 
     items = [Number(42), Number(42.001), Number(43)]
