@@ -104,7 +104,7 @@ pep8: env .depends-ci
 
 .PHONY: pep257
 pep257: env .depends-ci
-	$(PEP257) $(PACKAGE) --ignore=E501
+	$(PEP257) $(PACKAGE) --ignore=E501,D102
 
 .PHONY: pylint
 pylint: env .depends-dev
@@ -127,7 +127,7 @@ tests: env .depends-ci
 	TEST_INTEGRATION=1 $(NOSE) --verbose --stop --cover-package=$(PACKAGE)
 
 .PHONY: ci
-ci: pep8 test tests
+ci: pep8 pep257 test tests
 
 # Cleanup ####################################################################
 

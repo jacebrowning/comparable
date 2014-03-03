@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Class definitions for simple comparable types.
-"""
+"""Class definitions for simple comparable types."""
 
 import logging
 from difflib import SequenceMatcher
@@ -11,6 +9,7 @@ from comparable import SimpleComparable
 
 
 class _Simple(SimpleComparable):  # pylint: disable=W0223
+
     """SimpleComparable with common magic methods implemented."""
 
     def __init__(self, value):
@@ -27,6 +26,7 @@ class _Simple(SimpleComparable):  # pylint: disable=W0223
 
 
 class Number(_Simple):
+
     """Comparable positive number."""
 
     threshold = 0.999  # 99.9% similar
@@ -37,13 +37,11 @@ class Number(_Simple):
             raise ValueError("Number objects can only be positive")
 
     def equality(self, other):
-        """Get equality using floating point equality.
-        """
+        """Get equality using floating point equality."""
         return float(self) == float(other)
 
     def similarity(self, other):
-        """Get similarity as a ratio of the two numbers.
-        """
+        """Get similarity as a ratio of the two numbers."""
         numerator, denominator = sorted((self.value, other.value))
         try:
             ratio = float(numerator) / denominator
@@ -54,37 +52,37 @@ class Number(_Simple):
 
 
 class Text(_Simple):
+
     """Comparable generic text."""
 
     threshold = 0.83  # "Hello, world!" ~ "hello world"
 
     def equality(self, other):
-        """Get equality using string comparison.
-        """
+        """Get equality using string comparison."""
         return str(self) == str(other)
 
     def similarity(self, other):
-        """Get similarity as a ratio of the two texts.
-        """
+        """Get similarity as a ratio of the two texts."""
         ratio = SequenceMatcher(a=self.value, b=other.value).ratio()
         similarity = self.Similarity(ratio)
         return similarity
 
 
 class TextEnum(Text):
+
     """Comparable case-insensitive textual enumeration."""
 
     threshold = 1.0  # enumerations must match
 
     def similarity(self, other):
-        """Get similarity as a discrete ratio (1.0 or 0.0).
-        """
+        """Get similarity as a discrete ratio (1.0 or 0.0)."""
         ratio = 1.0 if (str(self).lower() == str(other).lower()) else 0.0
         similarity = self.Similarity(ratio)
         return similarity
 
 
 class TextTitle(Text):
+
     """Comparable case-insensitive textual titles."""
 
     threshold = 0.93  # "The Cat and the Hat" ~ "cat an' the hat"
@@ -100,8 +98,7 @@ class TextTitle(Text):
 
     @staticmethod
     def _strip(text):
-        """Strip articles/whitespace and remove case.
-        """
+        """Strip articles/whitespace and remove case."""
         text = text.strip()
         text = text.replace('  ', ' ')  # remove duplicate spaces
         text = text.lower()
@@ -114,8 +111,7 @@ class TextTitle(Text):
         return text
 
     def similarity(self, other):
-        """Get similarity as a ratio of the stripped text.
-        """
+        """Get similarity as a ratio of the stripped text."""
         logging.debug("comparing {} and {}...".format(repr(self.stripped),
                                                       repr(other.stripped)))
         ratio = SequenceMatcher(a=self.stripped, b=other.stripped).ratio()

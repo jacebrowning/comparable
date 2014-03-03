@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Package for Comparable.
-"""
+"""Package for Comparable."""
 
 __project__ = 'Comparable'
 __version__ = '0.0.3'

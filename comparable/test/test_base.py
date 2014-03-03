@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Tests for the comparable.base module.
-"""
+"""Tests for the comparable.base module."""
 
 import logging
 import unittest
@@ -18,9 +16,11 @@ from comparable.test import settings
 
 
 class TestBase(TestCase):  # pylint: disable=R0904
+
     """Unit tests for the Base class."""
 
     class Sample(_Base):  # pylint: disable=R0903
+
         """Test class to show __repr__ formatting."""
 
         def __init__(self, arg1, arg2, kwarg1=None, kwarg2=None):
@@ -59,6 +59,7 @@ class TestBase(TestCase):  # pylint: disable=R0904
 
 
 class TestSimilarity(TestCase):  # pylint: disable=R0904
+
     """Unit tests for the Similarity class."""
 
     def test_str(self):
@@ -184,10 +185,13 @@ class TestSimilarity(TestCase):  # pylint: disable=R0904
 
 
 class TestSimpleComparable(TestCase):  # pylint: disable=R0904
+
     """Unit tests for the SimpleComparable class."""
 
     class Simple(SimpleComparable):  # pylint: disable=W0223
+
         """An implementation of SimpleComparable using mocks."""
+
         equality = Mock()
         similarity = Mock()
 
@@ -237,12 +241,15 @@ class TestSimpleComparable(TestCase):  # pylint: disable=R0904
 
 
 class TestCompoundComparable(TestCase):  # pylint: disable=R0904
+
     """Unit tests for the CompoundComparable class."""  # pylint: disable=C0103
 
     class Compound(CompoundComparable):  # pylint: disable=W0223
+
         """An implementation of CompoundComparable using mocks."""
 
         class Simple(SimpleComparable):  # pylint: disable=W0223
+
             """An implementation of SimpleComparable using mocks."""
 
             def __repr__(self):
@@ -358,6 +365,7 @@ class TestCompoundComparable(TestCase):  # pylint: disable=R0904
 
 
 class TestModule(TestCase):  # pylint: disable=R0904
+
     """Unit tests for the module functions."""
 
     def setUp(self):
