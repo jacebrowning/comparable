@@ -127,7 +127,7 @@ tests: env .depends-ci
 	TEST_INTEGRATION=1 $(NOSE) --verbose --stop --cover-package=$(PACKAGE)
 
 .PHONY: ci
-ci: pep8 test tests
+ci: pep8 pep257 test tests
 
 # Cleanup ####################################################################
 
