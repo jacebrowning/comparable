@@ -162,7 +162,7 @@ class Comparable(_Base, metaclass=ABCMeta):
         return equal(self, other)
 
     def __ne__(self, other):
-        return not (self == other)
+        return not self == other
 
     def __mod__(self, other):
         """Maps the '%' operator to be a shortcut for "similarity".

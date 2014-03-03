@@ -305,7 +305,8 @@ class TestCompoundComparable(TestCase):  # pylint: disable=R0904
         self.obj1.item2.similarity.assert_called_once_with(self.obj2.item2)
 
     def test_similarity_false(self):
-        """Verify two compound comparables can be compared for non-similarity."""
+        """Verify two compound comparables can be compared for non-similarity.
+        """
         self.obj1.item1.similarity.return_value = Similarity(1.0)
         self.obj1.item2.similarity.return_value = Similarity(0.0)
         # Testing: %
