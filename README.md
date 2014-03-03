@@ -46,7 +46,7 @@ package:
     comparable.__version__
     >>> from comparable import SimpleComparable, CompoundComparable
 
-Comparable classes use '`==`' as the operation for "equality" and '`%`'
+Comparable classes use `==` as the operation for "equality" and `%`
 as the operation for "similarity". They may also override a `threshold`
 attribute to set the "similarity" ratio.
 
