@@ -21,7 +21,7 @@ setuptools.setup(
     version=__version__,
 
     description="Base class to enable objects to be compared for similarity.",
-    url='http://pypi.python.org/pypi/Comparable',
+    url='https://github.com/jacebrowning/comparable',
     author='Jace Browning',
     author_email='jacebrowning@gmail.com',
 
