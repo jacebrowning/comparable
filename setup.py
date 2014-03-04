@@ -32,7 +32,7 @@ setuptools.setup(
     long_description=(README + '\n' + CHANGES),
     license='LGPL',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',  # pylint: disable=C0301
         'Natural Language :: English',
