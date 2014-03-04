@@ -5,9 +5,7 @@ Comparable
 [![Coverage Status](https://coveralls.io/repos/jacebrowning/comparable/badge.png?branch=master)](https://coveralls.io/r/jacebrowning/comparable?branch=master)
 [![PyPI Version](https://badge.fury.io/py/Comparable.png)](http://badge.fury.io/py/Comparable)
 
-Comparable is a library providing abstract base classes that enable
-subclasses to be compared for "equality" and "similarity" based on their
-attributes.
+Comparable is a library providing abstract base classes that enable subclasses to be compared for "equality" and "similarity" based on their attributes.
 
 
 
@@ -38,33 +36,26 @@ Or directly from the source code:
 Basic Usage
 ===========
 
-After installation, abstract base classes can be imported from the
-package:
+After installation, abstract base classes can be imported from the package:
 
     python
     >>> import comparable
     comparable.__version__
     >>> from comparable import SimpleComparable, CompoundComparable
 
-Comparable classes use `==` as the operation for "equality" and `%`
-as the operation for "similarity". They may also override a `threshold`
-attribute to set the "similarity" ratio.
+Comparable classes use `==` as the operation for "equality" and `%` as the operation for "similarity". They may also override a `threshold` attribute to set the "similarity" ratio.
 
 
 Simple Comparables
 ------------------
 
-Simple comparable types must override the `equality` and `similarity`
-methods to return bool and Similarity objects, respectively. See
-`comparable.simple` for examples.
+Simple comparable types must override the `equality` and `similarity` methods to return bool and Similarity objects, respectively. See `comparable.simple` for examples.
 
 
 Compound Comparables
 --------------------
 
-Compound comparable types contain multiple simple comparable types. They
-must override the `attributes` property to define which attributes
-should be used for comparison. See `comparable.compund` for examples.
+Compound comparable types contain multiple simple comparable types. They must override the `attributes` property to define which attributes should be used for comparison. See `comparable.compund` for examples.
 
 
 
