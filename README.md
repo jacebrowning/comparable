@@ -16,7 +16,7 @@ Getting Started
 Requirements
 ------------
 
-* Python 3.3: http://www.python.org/download/releases/3.3.4/#download
+* Python 3.3+
 
 
 Installation
@@ -96,6 +96,7 @@ Requirements
     * Linux: http://www.gnu.org/software/make (likely already installed)
 * virtualenv: https://pypi.python.org/pypi/virtualenv#installation
 * Pandoc: http://johnmacfarlane.net/pandoc/installing.html
+* Graphviz: http://www.graphviz.org/Download.php
 
 
 Installation
@@ -117,8 +118,9 @@ Build the documentation:
 Run static analysis:
 
     make pep8
+    make pep257
     make pylint
-    make check  # pep8 and pylint
+    make check  # includes all checks
 
 Prepare a release:
 
