@@ -1,9 +1,10 @@
 Comparable
 ==========
 
-[![Build Status](https://travis-ci.org/jacebrowning/comparable.png?branch=master)](https://travis-ci.org/jacebrowning/comparable)
-[![Coverage Status](https://coveralls.io/repos/jacebrowning/comparable/badge.png?branch=master)](https://coveralls.io/r/jacebrowning/comparable?branch=master)
-[![PyPI Version](https://badge.fury.io/py/Comparable.png)](http://badge.fury.io/py/Comparable)
+[![Build Status](http://img.shields.io/travis/jacebrowning/comparable/master.svg)](https://travis-ci.org/jacebrowning/comparable)
+[![Coverage Status](http://img.shields.io/coveralls/jacebrowning/comparable/master.svg)](https://coveralls.io/r/jacebrowning/comparable)
+[![PyPI Version](http://img.shields.io/pypi/v/Comparable.svg)](https://pypi.python.org/pypi/Comparable)
+[![PyPI Downloads](http://img.shields.io/pypi/dm/Comparable.svg)](https://pypi.python.org/pypi/Comparable)
 
 Comparable is a library providing abstract base classes that enable subclasses to be compared for "equality" and "similarity" based on their attributes.
 
