@@ -3,7 +3,7 @@
 """Package for Comparable."""
 
 __project__ = 'Comparable'
-__version__ = '0.2-dev'
+__version__ = '0.2'
 
 VERSION = __project__ + '-' + __version__
 

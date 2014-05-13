@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.2 (dev)
---
+0.2 (2014/05/12)
+----------------
 
 - Added similarity assertions to the TestCase class.
 
