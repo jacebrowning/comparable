@@ -12,31 +12,31 @@ from comparable.test import TestCase, settings
 
 class TestNumber(TestCase):  # pylint: disable=R0904
 
-    """Integration tests for the Number class."""
+    """Integration tests for the Number class."""  # pylint: disable=C0103
 
     def test_identical(self):
         """Verify two identical numbers can be compared."""
-        obj1 = Number(42)
-        obj2 = Number(42)
-        self.assertComparison(obj1, obj2, True, 1.00)
+        a = Number(42)
+        b = Number(42)
+        self.assertComparison(a, b, True, True, 1.00)
 
     def test_different(self):
         """Verify two different numbers can be compared."""
-        obj1 = Number(1)
-        obj2 = Number(42)
-        self.assertComparison(obj1, obj2, False, 0.02)
+        a = Number(1)
+        b = Number(42)
+        self.assertComparison(a, b, False, False, 0.02)
 
     def test_one_zero(self):
         """Verify zero can be compared with another number."""
-        obj1 = Number(0)
-        obj2 = Number(42)
-        self.assertComparison(obj1, obj2, False, 0.00)
+        a = Number(0)
+        b = Number(42)
+        self.assertComparison(a, b, False, False, 0.00)
 
     def test_both_zero(self):
         """Verify two zero can be compared."""
-        obj1 = Number(0)
-        obj2 = Number(0)
-        self.assertComparison(obj1, obj2, True, 1.00)
+        a = Number(0)
+        b = Number(0)
+        self.assertComparison(a, b, True, True, 1.00)
 
     def test_init_invalid(self):
         """Verify that a number can only be positive."""
@@ -56,37 +56,37 @@ class TestNumber(TestCase):  # pylint: disable=R0904
 
 class TestText(TestCase):  # pylint: disable=R0904
 
-    """Integration tests for the Text class."""
+    """Integration tests for the Text class."""  # pylint: disable=C0103
 
     def test_identical(self):
         """Verify two identical texts can be compared."""
-        obj1 = Text("abc123")
-        obj2 = Text("abc123")
-        self.assertComparison(obj1, obj2, True, 1.00)
+        a = Text("abc123")
+        b = Text("abc123")
+        self.assertComparison(a, b, True, True, 1.00)
 
     def test_different(self):
         """Verify two different texts can be compared."""
-        obj1 = Text("abc123")
-        obj2 = Text("def456")
-        self.assertComparison(obj1, obj2, False, 0.00)
+        a = Text("abc123")
+        b = Text("def456")
+        self.assertComparison(a, b, False, False, 0.00)
 
     def test_close(self):
         """Verify two similar texts can be compared."""
-        obj1 = Text("abcdefghijklmnopqrstuvwzyz")
-        obj2 = Text("Abcdefghijklmnopqrstuvwzyz")
-        self.assertComparison(obj1, obj2, False, 0.96)
+        a = Text("abcdefghijklmnopqrstuvwzyz")
+        b = Text("Abcdefghijklmnopqrstuvwzyz")
+        self.assertComparison(a, b, False, True, 0.96)
 
     def test_one_empty(self):
         """Verify an empty text can be compared to a text."""
-        obj1 = Text("")
-        obj2 = Text("def456")
-        self.assertComparison(obj1, obj2, False, 0.00)
+        a = Text("")
+        b = Text("def456")
+        self.assertComparison(a, b, False, False, 0.00)
 
     def test_both_empty(self):
         """Verify two empty texts can be compared."""
-        obj1 = Text("")
-        obj2 = Text("")
-        self.assertComparison(obj1, obj2, True, 1.00)
+        a = Text("")
+        b = Text("")
+        self.assertComparison(a, b, True, True, 1.00)
 
     def test_threshold(self):
         """Verify the Text threshold is correct."""
@@ -98,25 +98,25 @@ class TestText(TestCase):  # pylint: disable=R0904
 
 class TestEnum(TestCase):  # pylint: disable=R0904
 
-    """Integration tests for the TextEnum class."""
+    """Integration tests for the TextEnum class."""  # pylint: disable=C0103
 
     def test_identical(self):
         """Verify two identical text enums can be compared."""
-        obj1 = TextEnum("abc123")
-        obj2 = TextEnum("abc123")
-        self.assertComparison(obj1, obj2, True, 1.00)
+        a = TextEnum("abc123")
+        b = TextEnum("abc123")
+        self.assertComparison(a, b, True, True, 1.00)
 
     def test_different(self):
         """Verify two different text enums can be compared."""
-        obj1 = TextEnum("abc123")
-        obj2 = TextEnum("def456")
-        self.assertComparison(obj1, obj2, False, 0.00)
+        a = TextEnum("abc123")
+        b = TextEnum("def456")
+        self.assertComparison(a, b, False, False, 0.00)
 
     def test_close(self):
         """Verify two similar text enums can be compared."""
-        obj1 = TextEnum("abcdefghijklmnopqrstuvwzyz")
-        obj2 = TextEnum("Abcdefghijklmnopqrstuvwzyz")
-        self.assertComparison(obj1, obj2, False, 1.00)
+        a = TextEnum("abcdefghijklmnopqrstuvwzyz")
+        b = TextEnum("Abcdefghijklmnopqrstuvwzyz")
+        self.assertComparison(a, b, False, True, 1.00)
 
     def test_threshold(self):
         """Verify the TextEnum threshold is correct."""
@@ -128,25 +128,25 @@ class TestEnum(TestCase):  # pylint: disable=R0904
 
 class TestTextTitle(TestCase):  # pylint: disable=R0904
 
-    """Integration tests for the TextTitle class."""
+    """Integration tests for the TextTitle class."""  # pylint: disable=C0103
 
     def test_identical(self):
         """Verify two identical text titles can be compared."""
-        obj1 = TextTitle("The Cat and the Hat")
-        obj2 = TextTitle("The Cat and the Hat")
-        self.assertComparison(obj1, obj2, True, 1.00)
+        a = TextTitle("The Cat and the Hat")
+        b = TextTitle("The Cat and the Hat")
+        self.assertComparison(a, b, True, True, 1.00)
 
     def test_different(self):
         """Verify two different text titles can be compared."""
-        obj1 = TextTitle("The Cat and the Hat")
-        obj2 = TextTitle("A Clockwork Orange")
-        self.assertComparison(obj1, obj2, False, 0.32)
+        a = TextTitle("The Cat and the Hat")
+        b = TextTitle("A Clockwork Orange")
+        self.assertComparison(a, b, False, False, 0.32)
 
     def test_close(self):
         """Verify two similar text titles can be compared."""
-        obj1 = TextTitle("The Cat and the Hat")
-        obj2 = TextTitle("The Cat & The Hat")
-        self.assertComparison(obj1, obj2, False, 1.00)
+        a = TextTitle("The Cat and the Hat")
+        b = TextTitle("The Cat & The Hat")
+        self.assertComparison(a, b, False, True, 1.00)
 
     def test_threshold(self):
         """Verify the TextTitle threshold is correct."""

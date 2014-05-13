@@ -14,16 +14,16 @@ class TestCase(unittest.TestCase):  # pylint: disable=R0904
 
     """Common test case class with new assertion methods."""  # pylint: disable=C0103
 
-    def assertComparison(self, obj1, obj2,
-                         expected_equality, expected_similarity):  # pylint:disable=R0913
+    def assertComparison(self, a, b, exp_equal, exp_similar, exp_similarity):  # pylint:disable=R0913
         """Fail if objects do not match the expected equality/similarity."""
         logging.info("calculating equality...")
-        equality = obj1 == obj2
+        act_equality = a == b
         logging.info("calculating similarity...")
-        similarity = obj1 % obj2
+        act_similarity = a % b
         logging.info("checking expected results...")
-        self.assertEqual(expected_equality, equality)
-        self.assertAlmostEqual(expected_similarity, similarity, 2)
+        self.assertEqual(exp_equal, bool(act_equality))
+        self.assertEqual(exp_similar, bool(act_similarity))
+        self.assertAlmostEqual(exp_similarity, act_similarity, 2)
 
 
 @unittest.skipUnless(os.getenv(ENV), REASON)  # pylint: disable=R0904
