@@ -41,21 +41,19 @@ class TestBase(TestCase):  # pylint: disable=R0904
 
     def test_repr_all_args(self):
         """Verify a class with arguments is represented."""
-        Sample = self.Sample  # pylint: disable=C0103
-        sample = Sample(123, 'abc', 456, 'def')
-        self.assertEqual(sample, eval(repr(sample)))
+        sample = self.Sample(123, 'abc', 456, 'def')
+        self.assertEqual("Sample(123, 'abc', kwarg1=456, kwarg2='def')",
+                         repr(sample))
 
     def test_repr_no_kwargs(self):
         """Verify a class with no keyword arguments is represented."""
-        Sample = self.Sample  # pylint: disable=C0103
-        sample = Sample(123, 'abc')
-        self.assertEqual(sample, eval(repr(sample)))
+        sample = self.Sample(123, 'abc')
+        self.assertEqual("Sample(123, 'abc')", repr(sample))
 
     def test_repr_empty_args(self):
         """Verify a class with empty keyword arguments is represented."""
-        Sample = self.Sample  # pylint: disable=C0103
-        sample = Sample(123, 'abc', None, kwarg2=None)
-        self.assertEqual(sample, eval(repr(sample)))
+        sample = self.Sample(123, 'abc', None, kwarg2=None)
+        self.assertEqual("Sample(123, 'abc')", repr(sample))
 
 
 class TestSimilarity(TestCase):  # pylint: disable=R0904
@@ -71,7 +69,7 @@ class TestSimilarity(TestCase):  # pylint: disable=R0904
     def test_repr(self):
         """Verify object representation works for similarity objects."""
         sim = Similarity(0.89, threshold=0.87)
-        self.assertEqual(sim, eval(repr(sim)))
+        self.assertEqual("Similarity(0.89, threshold=0.87)", repr(sim))
 
     def test_bool_true(self):
         """Verify a similarity of 1.0 is True."""

@@ -5,7 +5,7 @@
 import logging
 from difflib import SequenceMatcher
 
-from comparable import SimpleComparable
+from comparable.base import SimpleComparable
 
 
 class _Simple(SimpleComparable):  # pylint: disable=W0223

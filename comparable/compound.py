@@ -5,7 +5,7 @@
 import logging
 from itertools import permutations
 
-from comparable import CompoundComparable
+from comparable.base import CompoundComparable
 
 
 class Group(CompoundComparable):  # pylint: disable=W0223

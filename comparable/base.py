@@ -3,6 +3,7 @@
 """Abstract base class and similarity functions."""
 
 import logging
+from collections import OrderedDict
 from abc import ABCMeta, abstractmethod, abstractproperty  # pylint: disable=W0611
 
 
@@ -18,8 +19,9 @@ class _Base(object):  # pylint: disable=R0903
         @return: __repr__ string
 
         """
-        # Remove unnecessary empty keywords arguments
+        # Remove unnecessary empty keywords arguments and sort the arguments
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
+        kwargs = OrderedDict(sorted(kwargs.items()))
 
         # Build the __repr__ string pieces
         args_repr = ', '.join(repr(arg) for arg in args)
