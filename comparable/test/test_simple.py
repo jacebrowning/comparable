@@ -46,6 +46,11 @@ class TestNumber(TestCase):  # pylint: disable=R0904
         """Verify a Number can be converted to a string."""
         self.assertEqual("42.0", str(Number(42.0)))
 
+    def test_bool(self):
+        """verify a Number can be converted to a boolean."""
+        self.assertTrue(Number(42))
+        self.assertFalse(Number(0))
+
     def test_threshold(self):
         """Verify the Number threshold is correct."""
         self.assertTrue(Number(100) %

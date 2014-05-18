@@ -24,6 +24,9 @@ class _Simple(SimpleComparable):  # pylint: disable=W0223
     def __float__(self):
         return float(self.value)
 
+    def __bool__(self):
+        return bool(self.value)
+
 
 class Number(_Simple):
 
