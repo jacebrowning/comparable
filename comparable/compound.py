@@ -27,9 +27,9 @@ class Group(CompoundComparable):  # pylint: disable=W0223
                 index = int(name[4:]) - 1  # "item<n>" -> <n>-1
                 return self[index]
             except ValueError:
-                logging.debug("{} is not in the form 'item<n>'".format(name))
+                logging.debug("%s is not in the form 'item<n>'", name)
             except IndexError:
-                logging.debug("item index {} is out of range".format(index))
+                logging.debug("item index %s is out of range", index)
 
         raise AttributeError
 
@@ -68,7 +68,7 @@ class Group(CompoundComparable):  # pylint: disable=W0223
                      result=permutation_sim)
 
             sim = max(sim, permutation_sim)
-            logging.debug("highest similarity: {}".format(sim))
+            logging.debug("highest similarity: %s", sim)
 
         first.items = items  # restore original items list
 

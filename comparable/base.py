@@ -192,7 +192,7 @@ class Comparable(_Base, metaclass=ABCMeta):
                 attr1 = getattr(self, aname)
                 attr2 = getattr(other, aname)
             except AttributeError as error:
-                logging.debug("{}.{}: {}".format(cname, aname, error))
+                logging.debug("%s.%s: %s", cname, aname, error)
                 return False
             self.log(attr1, attr2, '==', cname=cname, aname=aname)
             eql = (attr1 == attr2)
