@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Functions to utilize lists of Comparable objects."""
 
 

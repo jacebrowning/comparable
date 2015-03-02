@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Setup script for Comparable.
-"""
+"""Setup script for Comparable."""
 
 import setuptools
 
@@ -42,5 +40,5 @@ setuptools.setup(
         'Topic :: Software Development :: Libraries',
     ],
 
-    install_requires=[],
+    install_requires=open('requirements.txt').readlines(),
 )
