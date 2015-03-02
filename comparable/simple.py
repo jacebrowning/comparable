@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Class definitions for simple comparable types."""
 
 import logging
@@ -96,8 +94,7 @@ class TextTitle(Text):
     def __init__(self, value):
         super().__init__(value)
         self.stripped = self._strip(self.value)
-        logging.debug("stripped {} to {}".format(repr(self.value),
-                                                 repr(self.stripped)))
+        logging.debug("stripped %r to %r", self.value, self.stripped)
 
     @staticmethod
     def _strip(text):
@@ -115,8 +112,7 @@ class TextTitle(Text):
 
     def similarity(self, other):
         """Get similarity as a ratio of the stripped text."""
-        logging.debug("comparing {} and {}...".format(repr(self.stripped),
-                                                      repr(other.stripped)))
+        logging.debug("comparing %r and %r...", self.stripped, other.stripped)
         ratio = SequenceMatcher(a=self.stripped, b=other.stripped).ratio()
         similarity = self.Similarity(ratio)
         return similarity

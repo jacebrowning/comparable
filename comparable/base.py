@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Abstract base class and similarity functions."""
 
 import logging
@@ -194,7 +192,7 @@ class Comparable(_Base, metaclass=ABCMeta):
                 attr1 = getattr(self, aname)
                 attr2 = getattr(other, aname)
             except AttributeError as error:
-                logging.debug("{}.{}: {}".format(cname, aname, error))
+                logging.debug("%s.%s: %s", cname, aname, error)
                 return False
             self.log(attr1, attr2, '==', cname=cname, aname=aname)
             eql = (attr1 == attr2)
@@ -254,13 +252,11 @@ class Comparable(_Base, metaclass=ABCMeta):
 
         return sim
 
-    def Similarity(self, value=None, threshold=None):  # pylint: disable=C0103
+    def Similarity(self, value=None):  # pylint: disable=C0103
         """Constructor for new default Similarities."""
         if value is None:
             value = 0.0
-        if threshold is None:
-            threshold = self.threshold
-        return Similarity(value, threshold=threshold)
+        return Similarity(value, threshold=self.threshold)
 
     @staticmethod
     def log(obj1, obj2, sym, cname=None, aname=None, result=None):  # pylint: disable=R0913

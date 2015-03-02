@@ -6,7 +6,6 @@ Changelog
 
 - Added __bool__ to the base simple type.
 
-
 0.2 (2014/05/12)
 ----------------
 
