@@ -252,13 +252,11 @@ class Comparable(_Base, metaclass=ABCMeta):
 
         return sim
 
-    def Similarity(self, value=None, threshold=None):  # pylint: disable=C0103
+    def Similarity(self, value=None):  # pylint: disable=C0103
         """Constructor for new default Similarities."""
         if value is None:
             value = 0.0
-        if threshold is None:
-            threshold = self.threshold
-        return Similarity(value, threshold=threshold)
+        return Similarity(value, threshold=self.threshold)
 
     @staticmethod
     def log(obj1, obj2, sym, cname=None, aname=None, result=None):  # pylint: disable=R0913
