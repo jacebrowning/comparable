@@ -287,8 +287,9 @@ class Comparable(_Base, metaclass=ABCMeta):
             _Indent.less()
             fmt = _Indent.indent(fmt)
 
-        logging.info(fmt.format(o1=repr(obj1), o2=repr(obj2),
-                                c=cname, a=aname, sym=sym, r=result))
+        msg = fmt.format(o1=repr(obj1), o2=repr(obj2),
+                         c=cname, a=aname, sym=sym, r=result)
+        logging.info(msg)
 
 
 class SimpleComparable(Comparable):  # pylint: disable=W0223
